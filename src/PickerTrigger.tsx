@@ -1,7 +1,7 @@
-import * as React from 'react';
-import classNames from 'classnames';
 import Trigger from '@rc-component/trigger';
 import type { AlignType } from '@rc-component/trigger/lib/interface';
+import classNames from 'classnames';
+import * as React from 'react';
 
 const BUILT_IN_PLACEMENTS = {
   bottomLeft: {

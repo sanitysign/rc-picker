@@ -14,8 +14,8 @@
 import type { AlignType } from '@rc-component/trigger/lib/interface';
 import classNames from 'classnames';
 import useMergedState from 'rc-util/lib/hooks/useMergedState';
-import warning from 'rc-util/lib/warning';
 import pickAttrs from 'rc-util/lib/pickAttrs';
+import warning from 'rc-util/lib/warning';
 import * as React from 'react';
 import useHoverValue from './hooks/useHoverValue';
 import usePickerInput from './hooks/usePickerInput';
@@ -34,10 +34,10 @@ import PickerPanel from './PickerPanel';
 import PickerTrigger from './PickerTrigger';
 import PresetPanel from './PresetPanel';
 import { formatValue, isEqual, parseValue } from './utils/dateUtil';
+import { getClearIcon } from './utils/getClearIcon';
 import { toArray } from './utils/miscUtil';
 import { elementsContains, getDefaultFormat, getInputSize } from './utils/uiUtil';
 import { legacyPropsWarning } from './utils/warnUtil';
-import { getClearIcon } from './utils/getClearIcon';
 
 export type PickerRefConfig = {
   focus: () => void;
@@ -67,8 +67,8 @@ export type PickerSharedProps<DateType> = {
 
   // Render
   suffixIcon?: React.ReactNode;
-  /** 
-   * Clear all icon 
+  /**
+   * Clear all icon
    * @deprecated Please use `allowClear` instead
    **/
   clearIcon?: React.ReactNode;
@@ -490,11 +490,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     );
   }
 
-  const mergedClearIcon: React.ReactNode = getClearIcon(
-    prefixCls,
-    allowClear,
-    clearIcon,
-  );
+  const mergedClearIcon: React.ReactNode = getClearIcon(prefixCls, allowClear, clearIcon);
 
   const clearNode: React.ReactNode = (
     <span

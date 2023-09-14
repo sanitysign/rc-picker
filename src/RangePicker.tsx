@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import useMergedState from 'rc-util/lib/hooks/useMergedState';
+import pickAttrs from 'rc-util/lib/pickAttrs';
 import raf from 'rc-util/lib/raf';
 import warning from 'rc-util/lib/warning';
-import pickAttrs from 'rc-util/lib/pickAttrs';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { PickerPanelProps } from '.';
@@ -694,18 +694,18 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const startStr =
     mergedValue && mergedValue[0]
       ? formatValue(mergedValue[0], {
-        locale,
-        format: 'YYYYMMDDHHmmss',
-        generateConfig,
-      })
+          locale,
+          format: 'YYYYMMDDHHmmss',
+          generateConfig,
+        })
       : '';
   const endStr =
     mergedValue && mergedValue[1]
       ? formatValue(mergedValue[1], {
-        locale,
-        format: 'YYYYMMDDHHmmss',
-        generateConfig,
-      })
+          locale,
+          format: 'YYYYMMDDHHmmss',
+          generateConfig,
+        })
       : '';
 
   useEffect(() => {
@@ -868,7 +868,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           defaultValue={
             mergedActivePickerIndex === 0 ? getValue(selectedValue, 1) : getValue(selectedValue, 0)
           }
-        // defaultPickerValue={undefined}
+          // defaultPickerValue={undefined}
         />
       </RangeContext.Provider>
     );
@@ -1047,11 +1047,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     );
   }
 
-  const mergedClearIcon: React.ReactNode = getClearIcon(
-    prefixCls,
-    allowClear,
-    clearIcon,
-  );
+  const mergedClearIcon: React.ReactNode = getClearIcon(prefixCls, allowClear, clearIcon);
 
   const clearNode: React.ReactNode = (
     <span
@@ -1081,10 +1077,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     </span>
   );
 
-  const mergedAllowClear = allowClear && (
-    (getValue(mergedValue as RangeValue<DateType>, 0) && !mergedDisabled[0]) ||
-    (getValue(mergedValue as RangeValue<DateType>, 1) && !mergedDisabled[1])
-  );
+  const mergedAllowClear =
+    allowClear &&
+    ((getValue(mergedValue as RangeValue<DateType>, 0) && !mergedDisabled[0]) ||
+      (getValue(mergedValue as RangeValue<DateType>, 1) && !mergedDisabled[1]));
 
   const inputSharedProps = {
     size: getInputSize(picker, formatList[0], generateConfig),
