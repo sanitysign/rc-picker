@@ -1,0 +1,35 @@
+{
+  "extends": ["eslint:recommended", "react-app"],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true,
+    "commonjs": true,
+    "amd": true,
+    "jquery": true,
+    "webextensions": true
+  },
+  "rules": {
+    "no-var": "warn",
+    "no-unused-vars": "off",
+    "no-lone-blocks": "off",
+    "no-multi-spaces": "warn",
+    "space-in-parens": "warn",
+    "no-multiple-empty-lines": "warn",
+    "prefer-const": "warn",
+    "default-case": "off",
+    "no-throw-literal": "off",
+    "react/jsx-no-target-blank": "off",
+    "jsx-a11y/anchor-has-content": "off",
+    "import/no-anonymous-default-export": "off"
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2022
+  },
+  "globals": {
+    "globalThis": "readonly",
+    "appData": true,
+    "google": true
+  }
+}

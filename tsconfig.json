@@ -3,7 +3,7 @@
     "target": "esnext",
     "moduleResolution": "node",
     "baseUrl": "./",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
