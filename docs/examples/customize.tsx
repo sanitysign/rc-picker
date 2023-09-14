@@ -4,7 +4,7 @@ import Picker from '../../src';
 import PickerPanel from '../../src/PickerPanel';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 import './slide.less';
 
 interface DateRangeState {

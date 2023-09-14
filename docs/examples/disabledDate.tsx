@@ -4,7 +4,7 @@ import moment from 'moment';
 import Picker from '../../src/Picker';
 import momentGenerateConfig from '../../src/generate/moment';
 import enUS from '../../src/locale/en_US';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 
 export default () => {
   const [value, setValue] = React.useState<Moment | null>(undefined);

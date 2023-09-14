@@ -3,7 +3,7 @@ import moment from 'moment';
 import Picker, { RangePicker } from '../../src';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 
 const defaultValue = moment('2019-11-28 01:02:03');
 

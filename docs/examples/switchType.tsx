@@ -3,7 +3,7 @@ import { Moment } from 'moment';
 import Picker from '../../src/Picker';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 
 const sharedProps = {
   generateConfig: momentGenerateConfig,

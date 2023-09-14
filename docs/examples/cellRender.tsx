@@ -1,7 +1,7 @@
 import type { Moment } from 'moment';
 import moment from 'moment';
 import React from 'react';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
 import Picker from '../../src/Picker';

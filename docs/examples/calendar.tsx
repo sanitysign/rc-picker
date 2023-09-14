@@ -4,7 +4,7 @@ import Picker from '../../src/Picker';
 import PickerPanel from '../../src/PickerPanel';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 import './calendar.less';
 
 function dateRender(date: Moment, today: Moment) {

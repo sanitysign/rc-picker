@@ -2,7 +2,7 @@ import type { Moment } from 'moment';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import React from 'react';
-import '../../assets/index.less';
+import '../../assets/index.scss';
 import momentGenerateConfig from '../../src/generate/moment';
 import enUS from '../../src/locale/en_US';
 import zhCN from '../../src/locale/zh_CN';

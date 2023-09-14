@@ -1,26 +1,24 @@
-@prefix-cls: rc-picker;
+$background-color: rgb(255, 240, 255);
 
-@background-color: rgb(255, 240, 255);
+$input-placeholder-color: hsv(0, 0, 75%);
 
-@input-placeholder-color: hsv(0, 0, 75%);
-
-.placeholder(@color: @input-placeholder-color) {
-  // Firefox
-  &::-moz-placeholder {
-    opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
-  }
-
-  &::placeholder {
-    color: @color;
-  }
-
-  &:placeholder-shown {
-    text-overflow: ellipsis;
-  }
-}
-
-.@{prefix-cls} {
+.rc-picker {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 4px 11px;
+  color: rgba(0,0,0,.88);
+  font-size: 14px;
+  line-height: 1;
+  list-style: none;
+  font-family: -apple-system,BlinkMacSystemFont,segoe ui,Roboto,helvetica neue,Arial,noto sans,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol,noto color emoji;
+  position: relative;
   display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  transition: border .2s,box-shadow .2s;
+  $that: &;
 
   &-rtl {
     direction: rtl;
@@ -32,7 +30,7 @@
   &-panel {
     display: inline-block;
     vertical-align: top;
-    background: @background-color;
+    background: $background-color;
     border: 1px solid #666;
 
     &-focused {
@@ -128,7 +126,7 @@
         border: 1px solid green;
         border-right: 0;
         border-left: 0;
-        content: '';
+        content: "";
         pointer-events: none;
       }
     }
@@ -184,7 +182,7 @@
   // ================== Year & Month Panel ==================
   &-year-panel,
   &-month-panel {
-    .@{prefix-cls}-cell-inner {
+    #{$that}-cell-inner {
       width: 80px;
     }
   }
@@ -193,53 +191,53 @@
   &-week-panel {
     &-row {
       &:hover {
-        .@{prefix-cls}-cell {
+        #{$that}-cell {
           background: red;
         }
       }
 
       &-selected {
-        .@{prefix-cls}-cell {
+        #{$that}-cell {
           background: rgba(0, 0, 255, 0.3);
         }
       }
 
       &-range {
         &-hover {
-          .@{prefix-cls}-cell {
+          #{$that}-cell {
             background: rgba(0, 255, 0, 0.1);
           }
         }
 
         &-start,
         &-end {
-          .@{prefix-cls}-cell {
+          #{$that}-cell {
             background: rgba(0, 255, 0, 0.3);
           }
         }
       }
     }
 
-    .@{prefix-cls}-cell,
-    .@{prefix-cls}-cell-inner {
+    #{$that}-cell,
+    #{$that}-cell-inner {
       width: 20px;
     }
 
-    .@{prefix-cls}-cell-week {
+    #{$that}-cell-week {
       color: #999;
       font-weight: bold;
       font-size: 12px;
     }
 
-    .@{prefix-cls}-cell:hover > .@{prefix-cls}-cell-inner,
-    .@{prefix-cls}-cell-selected > .@{prefix-cls}-cell-inner {
+    #{$that}-cell:hover > #{$that}-cell-inner,
+    #{$that}-cell-selected > #{$that}-cell-inner {
       background: transparent;
     }
   }
 
   // ====================== Date Panel ======================
   &-date-panel {
-    .@{prefix-cls}-cell-inner {
+    #{$that}-cell-inner {
       width: 20px;
     }
   }
@@ -248,7 +246,7 @@
   &-time-panel {
     width: auto;
 
-    .@{prefix-cls}-content {
+    #{$that}-content {
       display: flex;
       max-height: 200px;
     }
@@ -278,13 +276,13 @@
         padding: 0;
         cursor: pointer;
 
-        &.@{prefix-cls}-time-panel-cell {
+        &#{$that}-time-panel-cell {
           &-disabled {
             opacity: 0.5;
           }
         }
 
-        .@{prefix-cls}-time-panel-cell-inner {
+        #{$that}-time-panel-cell-inner {
           display: block;
           width: 100%;
           height: 20px;
@@ -294,7 +292,7 @@
           line-height: 20px;
           text-align: left;
 
-          .@{prefix-cls}-panel-rtl & {
+          #{$that}-panel-rtl {
             padding: 0 12px 0 0;
             text-align: right;
           }
@@ -307,19 +305,19 @@
   &-datetime-panel {
     display: flex;
 
-    .@{prefix-cls}-time-panel {
+    #{$that}-time-panel {
       border-left: 1px solid #999;
     }
 
-    .@{prefix-cls}-date-panel,
-    .@{prefix-cls}-time-panel {
+    #{$that}-date-panel,
+    #{$that}-time-panel {
       transition: opacity 0.3s;
     }
 
     // Keyboard
     &-active {
-      .@{prefix-cls}-date-panel,
-      .@{prefix-cls}-time-panel {
+      #{$that}-date-panel,
+      #{$that}-time-panel {
         opacity: 0.3;
 
         &-active {
@@ -335,18 +333,29 @@
     display: inline-flex;
     width: 100%;
 
-    .@{prefix-cls}-rtl & {
+    #{$that}-rtl {
       text-align: right;
     }
 
     > input {
       width: 100%;
-      .placeholder();
+      // Firefox
+      &::-moz-placeholder {
+        opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+      }
+
+      &::placeholder {
+        color: $input-placeholder-color;
+      }
+
+      &:placeholder-shown {
+        text-overflow: ellipsis;
+      }
     }
 
     &-placeholder {
       > input {
-        color: @input-placeholder-color;
+        color: $input-placeholder-color;
       }
     }
   }
@@ -357,13 +366,13 @@
     right: 4px;
     cursor: pointer;
 
-    .@{prefix-cls}-rtl & {
+    #{$that}-rtl {
       right: auto;
       left: 4px;
     }
 
     &-btn::after {
-      content: '×';
+      content: "×";
     }
   }
 
@@ -381,34 +390,34 @@
     }
 
     // Panel
-    @arrow-size: 10px;
+    $arrow-size: 10px;
 
     &-placement-topLeft,
     &-placement-topRight {
-      .@{prefix-cls}-range-arrow {
-        bottom: @arrow-size / 2 + 1px;
+      #{$that}-range-arrow {
+        bottom: calc(($arrow-size / 2) + 1px);
         transform: rotate(135deg);
       }
     }
     &-placement-bottomLeft,
     &-placement-bottomright {
-      .@{prefix-cls}-range-arrow {
-        top: @arrow-size / 2 + 1px;
+      #{$that}-range-arrow {
+        top: calc(($arrow-size / 2) + 1px);
         transform: rotate(-45deg);
       }
     }
 
-    .@{prefix-cls}-range-arrow {
+    #{$that}-range-arrow {
       position: absolute;
-      left: @arrow-size;
+      left: $arrow-size;
       z-index: 1;
-      width: @arrow-size;
-      height: @arrow-size;
+      width: $arrow-size;
+      height: $arrow-size;
       margin-left: 10px;
       transition: all 0.3s;
 
-      .@{prefix-cls}-dropdown-rtl& {
-        right: @arrow-size;
+      #{$that}-dropdown-rtl {
+        right: $arrow-size;
         left: auto;
         margin-right: 10px;
         margin-left: 0;
@@ -421,9 +430,9 @@
         left: 50%;
         box-sizing: border-box;
         transform: translate(-50%, -50%);
-        content: '';
+        content: "";
 
-        .@{prefix-cls}-dropdown-rtl& {
+        #{$that}-dropdown-rtl {
           right: 50%;
           left: auto;
           transform: translate(50%, -50%);
@@ -431,16 +440,17 @@
       }
 
       &::before {
-        width: @arrow-size;
-        height: @arrow-size;
-        border: @arrow-size / 2 solid blue;
+        width: $arrow-size;
+        height: $arrow-size;
+        border: calc($arrow-size / 2) solid blue;
+
         border-color: blue blue transparent transparent;
       }
       &::after {
-        width: @arrow-size - 2px;
-        height: @arrow-size - 2px;
-        border: (@arrow-size - 2px) / 2 solid blue;
-        border-color: @background-color @background-color transparent transparent;
+        width: $arrow-size - 2px;
+        height: $arrow-size - 2px;
+        border: calc(($arrow-size - 2px) / 2) solid blue;
+        border-color: $background-color $background-color transparent transparent;
       }
     }
   }
@@ -449,14 +459,11 @@
   // =                     Range Picker                     =
   // ========================================================
   &-range {
-    position: relative;
-    display: inline-flex;
-
     &-wrapper {
       display: flex;
     }
 
-    .@{prefix-cls}-active-bar {
+    #{$that}-active-bar {
       bottom: 0;
       height: 3px;
       background: green;
@@ -465,8 +472,8 @@
       pointer-events: none;
     }
 
-    &.@{prefix-cls}-focused {
-      .@{prefix-cls}-active-bar {
+    &#{$that}-focused {
+      #{$that}-active-bar {
         opacity: 1;
       }
     }
