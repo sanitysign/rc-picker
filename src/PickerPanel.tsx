@@ -498,6 +498,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     case 'time':
       delete pickerProps.showTime;
       panelNode = (
+        //  @ts-expect-error
         <TimePanel<DateType>
           {...pickerProps}
           {...(typeof showTime === 'object' ? showTime : null)}

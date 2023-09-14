@@ -5,6 +5,7 @@ import type { BodyOperationRef } from './TimeBody';
 import TimeBody from './TimeBody';
 import type { PanelSharedProps, DisabledTimes, IntRange } from '../../interface';
 import { createKeyDownHandler } from '../../utils/uiUtil';
+import type { TimeBodyProps } from './TimeBody';
 
 export type SharedTimeProps<DateType> = {
   format?: string;
@@ -32,6 +33,7 @@ export type SharedTimeProps<DateType> = {
 export type TimePanelProps<DateType> = {
   format?: string;
   active?: boolean;
+  cellRender?: TimeBodyProps<DateType>["cellRender"]
 } & PanelSharedProps<DateType> &
   SharedTimeProps<DateType>;
 
