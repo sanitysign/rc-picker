@@ -374,14 +374,14 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         resetText();
       }
     }
-  }, [mergedOpen, valueTexts]);
+  }, [mergedOpen, valueTexts]); // eslint-disable-line
 
   // Change picker should sync back with text value
   React.useEffect(() => {
     if (!mergedOpen) {
       resetText();
     }
-  }, [picker]);
+  }, [picker]); // eslint-disable-line
 
   // Sync innerValue with control mode
   React.useEffect(() => {
@@ -513,7 +513,9 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const mergedAllowClear = !!allowClear && mergedValue && !disabled;
 
-  const mergedInputProps: React.InputHTMLAttributes<HTMLInputElement> & { ref: React.MutableRefObject<HTMLInputElement> } = {
+  const mergedInputProps: React.InputHTMLAttributes<HTMLInputElement> & {
+    ref: React.MutableRefObject<HTMLInputElement>;
+  } = {
     id,
     tabIndex,
     disabled,

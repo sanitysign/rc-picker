@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type { PresetDate } from './interface';
 import { executeValue } from './utils/miscUtil';
 
@@ -30,6 +29,6 @@ export default function PresetPanel<T>(props: PresetPanelProps<T>) {
           </li>
         ))}
       </ul>
-    </div >
+    </div>
   );
 }

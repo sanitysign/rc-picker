@@ -12,6 +12,7 @@
   "module": "./es/index",
   "files": [
     "assets/*.css",
+    "assets/*.css.map",
     "assets/*.scss",
     "es",
     "lib"
@@ -19,10 +20,7 @@
   "homepage": "https://react-component.github.io/picker",
   "repository": {
     "type": "git",
-    "url": "git@github.com:react-component/picker.git"
-  },
-  "bugs": {
-    "url": "http://github.com/react-component/picker/issues"
+    "url": "git@github.com:/sanitysign/rc-picker.git"
   },
   "license": "MIT",
   "scripts": {

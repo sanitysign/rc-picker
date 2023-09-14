@@ -11,5 +11,14 @@ module.exports = {
     'no-confusing-arrow': 0,
     'jsx-a11y/no-autofocus': 0,
     'jsx-a11y/heading-has-content': 0,
+    '@typescript-eslint/ban-types': [
+      'warn',
+      {
+        types: {
+          '{}': false,
+        },
+        extendDefaults: true,
+      },
+    ],
   },
 };

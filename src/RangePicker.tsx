@@ -43,12 +43,12 @@ import {
   isSameWeek,
   parseValue,
 } from './utils/dateUtil';
+import { getClearIcon } from './utils/getClearIcon';
 import getExtraFooter from './utils/getExtraFooter';
 import getRanges from './utils/getRanges';
 import { getValue, toArray, updateValues } from './utils/miscUtil';
 import { elementsContains, getDefaultFormat, getInputSize } from './utils/uiUtil';
 import { legacyPropsWarning } from './utils/warnUtil';
-import { getClearIcon } from './utils/getClearIcon';
 
 function reorderValues<DateType>(
   values: RangeValue<DateType>,
@@ -339,7 +339,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   useEffect(() => {
     setInnerModes([picker, picker]);
-  }, [picker]);
+  }, [picker]); // eslint-disable-line
 
   const triggerModesChange = (modes: [PanelMode, PanelMode], values: RangeValue<DateType>) => {
     setInnerModes(modes);
@@ -723,12 +723,12 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         resetEndText();
       }
     }
-  }, [mergedOpen, startValueTexts, endValueTexts]);
+  }, [mergedOpen, startValueTexts, endValueTexts]); // eslint-disable-line
 
   // Sync innerValue with control mode
   useEffect(() => {
     setSelectedValue(mergedValue);
-  }, [startStr, endStr]);
+  }, [startStr, endStr]); // eslint-disable-line
 
   const mergedCellRender: CellRender<DateType> = useCellRender({
     cellRender,
@@ -757,10 +757,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     }
     warning(!dateRender, `'dateRender' is deprecated. Please use 'cellRender' instead.`);
     warning(!monthCellRender, `'monthCellRender' is deprecated. Please use 'cellRender' instead.`);
-    warning(
-      !clearIcon,
-      '`clearIcon` will be removed in future. Please use `allowClear` instead.',
-    );
+    warning(!clearIcon, '`clearIcon` will be removed in future. Please use `allowClear` instead.');
   }
 
   // ============================ Private ============================

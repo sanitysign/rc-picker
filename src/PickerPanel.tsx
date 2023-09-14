@@ -272,7 +272,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
 
   React.useEffect(() => {
     setInnerMode(picker);
-  }, [picker]);
+  }, [picker]); // eslint-disable-line
 
   const [sourceMode, setSourceMode] = React.useState<PanelMode>(() => mergedMode);
 
@@ -408,7 +408,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     if (value && !initRef.current) {
       setInnerViewDate(value);
     }
-  }, [value]);
+  }, [value]); // eslint-disable-line
 
   React.useEffect(() => {
     initRef.current = false;

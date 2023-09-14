@@ -23,6 +23,7 @@ Thumbs.db
 node_modules
 .cache
 assets/**/*.css
+assets/**/*.css.map
 build
 lib
 es
