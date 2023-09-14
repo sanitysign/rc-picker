@@ -91,6 +91,8 @@ export type PickerPanelSharedProps<DateType> = {
   /** @private Internal usage. Do not use in your production env */
   components?: Components;
   cellRender?: CellRender<DateType>;
+  showAllNavButtons?: boolean;
+  vertical?: boolean;
 };
 
 export type PickerPanelBaseProps<DateType> = {
@@ -165,6 +167,8 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     dateRender,
     monthCellRender,
     cellRender,
+    showAllNavButtons,
+    vertical,
   } = props as MergedPickerPanelProps<DateType>;
 
   const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
@@ -608,14 +612,16 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     );
   }
 
+  const hideNavButtons = inRange && !(showAllNavButtons || vertical);
+
   return (
     <PanelContext.Provider
       value={{
         ...panelContext,
         mode: mergedMode,
         hideHeader: 'hideHeader' in props ? hideHeader : panelContext.hideHeader,
-        hidePrevBtn: inRange && panelPosition === 'right',
-        hideNextBtn: inRange && panelPosition === 'left',
+        hidePrevBtn: hideNavButtons && panelPosition === 'right',
+        hideNextBtn: hideNavButtons && panelPosition === 'left',
       }}
     >
       <div

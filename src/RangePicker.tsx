@@ -258,6 +258,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     activePickerIndex,
     autoComplete = 'off',
     changeOnBlur,
+    vertical,
   } = props as MergedRangePickerProps<DateType>;
 
   const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
@@ -906,6 +907,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   function renderPanels() {
     let panels: React.ReactNode;
+    let showDoublePanel = false
     const extraNode = getExtraFooter(
       prefixCls,
       mergedModes[mergedActivePickerIndex],
@@ -938,7 +940,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       const nextViewDate = getClosingViewDate(viewDate, picker, generateConfig);
       const currentMode = mergedModes[mergedActivePickerIndex];
 
-      const showDoublePanel = currentMode === picker;
+      if (currentMode === picker) showDoublePanel = true
       const leftPanel = renderPanel(showDoublePanel ? 'left' : false, {
         pickerValue: viewDate,
         onPickerValueChange: (newViewDate) => {
@@ -974,6 +976,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       panels = renderPanel();
     }
 
+    let classNamePanels = `${prefixCls}-panels`
+    if (showDoublePanel) classNamePanels += ` ${prefixCls}-panels-double`
+    if (vertical) classNamePanels += ` ${prefixCls}-panels-vertical`
+
     let mergedNodes: React.ReactNode = (
       <div className={`${prefixCls}-panel-layout`}>
         <PresetPanel
@@ -988,7 +994,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           }}
         />
         <div>
-          <div className={`${prefixCls}-panels`}>{panels}</div>
+          <div className={classNamePanels}>{panels}</div>
           {(extraNode || rangesNode) && (
             <div className={`${prefixCls}-footer`}>
               {extraNode}

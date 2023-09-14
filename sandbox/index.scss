@@ -808,4 +808,12 @@ $background-color: rgb(255, 240, 255);
     flex-wrap: nowrap;
     align-items: stretch;
   }
+
+  &-panels {
+    display: flex;
+
+    &-vertical {
+      flex-direction: column;
+    }
+  }
 }
