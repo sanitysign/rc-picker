@@ -93,6 +93,7 @@ export type PickerPanelSharedProps<DateType> = {
   cellRender?: CellRender<DateType>;
   showAllNavButtons?: boolean;
   vertical?: boolean;
+  okBtn?: boolean;
 };
 
 export type PickerPanelBaseProps<DateType> = {
@@ -169,9 +170,11 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     cellRender,
     showAllNavButtons,
     vertical,
+    okBtn,
   } = props as MergedPickerPanelProps<DateType>;
 
-  const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
+  const withTime = (picker === 'date' && !!showTime) || picker === 'time'
+  const needConfirmButton: boolean = withTime || okBtn;
 
   const isHourStepValid = 24 % hourStep === 0;
   const isMinuteStepValid = 60 % minuteStep === 0;
@@ -579,7 +582,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
         okDisabled: !mergedValue || (disabledDate && disabledDate(mergedValue)),
         locale,
         showNow,
-        onNow: needConfirmButton && onNow,
+        onNow: withTime && onNow,
         onOk: () => {
           if (mergedValue) {
             triggerSelect(mergedValue, 'submit', true);

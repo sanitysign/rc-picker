@@ -137,7 +137,9 @@ const rangePresets: any = [
 
 const props = {
   separator: <RangeSeparator />,
-  onOk: (val) => console.log(val),
+  onOk: (val) => {
+    // console.log(val)
+  },
   generateConfig: dayjsGenerateConfig,
   locale: locale,
   superPrevIcon: <NavIconSuper />,
@@ -152,6 +154,7 @@ const props = {
   },
   showAllNavButtons: false,
   vertical: false,
+  okBtn: true,
 };
 
 const App = () => {
@@ -165,10 +168,10 @@ const App = () => {
 
       {/* <div className="spacer"></div> */}
 
-      <div className="pickers-row">
+      {/* <div className="pickers-row">
         <RangePicker {...props} placeholder={["Select start date", "Select end date"]} presets={rangePresets} />
         <RangePicker {...props} placeholder={["Select start date", "Select end date"]} presets={rangePresets} />
-      </div>
+      </div> */}
     </div>
   );
 };

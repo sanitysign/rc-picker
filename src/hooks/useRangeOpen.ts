@@ -40,6 +40,7 @@ export default function useRangeOpen(
   activeIndex: 0 | 1,
   firstTimeOpen: boolean,
   triggerOpen: (open: boolean, activeIndex: 0 | 1 | false, source: SourceType) => void,
+  focusNextInput: (activeIndex: 0 | 1 | false, source: SourceType) => void,
 ] {
   const [firstTimeOpen, setFirstTimeOpen] = React.useState(false);
 
@@ -68,11 +69,39 @@ export default function useRangeOpen(
 
   const queryNextIndex = (index: number) => (index === 0 ? 1 : 0);
 
+  const focusNextInput = (index: 0 | 1 | false, source: SourceType) => {
+    if (index === false) return null;
+    if (!(source === 'confirm' || (source === 'blur' && changeOnBlur))) return null;
+
+    const customNextActiveIndex = afferentOpen ? queryNextIndex(index) : nextActiveIndex;
+
+    if (customNextActiveIndex !== null) {
+      setFirstTimeOpen(false);
+      setMergedActivePickerIndex(customNextActiveIndex);
+    }
+
+    setNextActiveIndex(null);
+
+    if (!(customNextActiveIndex !== null && !disabled[customNextActiveIndex])) return false;
+
+    // Focus back
+    raf(() => {
+      const ref = [startInputRef, endInputRef][customNextActiveIndex];
+      ref.current?.focus();
+    });
+
+    return true;
+  };
+
   const triggerOpen = useEvent((nextOpen: boolean, index: 0 | 1 | false, source: SourceType) => {
     if (index === false) {
       // Only when `nextOpen` is false and no need open to next index
       setMergedOpen(nextOpen);
-    } else if (nextOpen) {
+
+      return;
+    }
+
+    if (nextOpen) {
       setMergedActivePickerIndex(index);
       setMergedOpen(nextOpen);
 
@@ -92,30 +121,19 @@ export default function useRangeOpen(
           setNextActiveIndex(null);
         }
       }
-    } else if (source === 'confirm' || (source === 'blur' && changeOnBlur)) {
-      const customNextActiveIndex = afferentOpen ? queryNextIndex(index) : nextActiveIndex;
 
-      if (customNextActiveIndex !== null) {
-        setFirstTimeOpen(false);
-        setMergedActivePickerIndex(customNextActiveIndex);
-      }
-      
-      setNextActiveIndex(null);
-
-      // Focus back
-      if (customNextActiveIndex !== null && !disabled[customNextActiveIndex]) {
-        raf(() => {
-          const ref = [startInputRef, endInputRef][customNextActiveIndex];
-          ref.current?.focus();
-        });
-      } else {
-        setMergedOpen(false);
-      }
-    } else {
-      setMergedOpen(false);
-      setAfferentOpen(false);
+      return;
     }
+
+    if (source === 'confirm' || (source === 'blur' && changeOnBlur)) {
+      const res = focusNextInput(index, source)
+      if (res === false) setMergedOpen(false);
+      return;
+    }
+
+    setMergedOpen(false);
+    setAfferentOpen(false);
   });
 
-  return [mergedOpen, mergedActivePickerIndex, firstTimeOpen, triggerOpen];
+  return [mergedOpen, mergedActivePickerIndex, firstTimeOpen, triggerOpen, focusNextInput];
 }

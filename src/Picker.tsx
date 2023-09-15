@@ -196,11 +196,13 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     autoComplete = 'off',
     inputRender,
     changeOnBlur,
+    okBtn,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
+  const withTime = (picker === 'date' && !!showTime) || picker === 'time'
+  const needConfirmButton: boolean = withTime || okBtn;
 
   const presetList = usePresets(presets);
 

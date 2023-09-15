@@ -259,9 +259,11 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     autoComplete = 'off',
     changeOnBlur,
     vertical,
+    okBtn,
   } = props as MergedRangePickerProps<DateType>;
 
-  const needConfirmButton: boolean = (picker === 'date' && !!showTime) || picker === 'time';
+  const withTime = (picker === 'date' && !!showTime) || picker === 'time';
+  const needConfirmButton: boolean = withTime || okBtn;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelDivRef = useRef<HTMLDivElement>(null);
@@ -351,18 +353,19 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   };
 
   // ============================= Open ==============================
-  const [mergedOpen, mergedActivePickerIndex, firstTimeOpen, triggerOpen] = useRangeOpen(
-    defaultOpen,
-    open,
-    activePickerIndex,
-    changeOnBlur,
-    startInputRef,
-    endInputRef,
-    getValue(selectedValue, 0),
-    getValue(selectedValue, 1),
-    mergedDisabled,
-    onOpenChange,
-  );
+  const [mergedOpen, mergedActivePickerIndex, firstTimeOpen, triggerOpen, focusNextInput] =
+    useRangeOpen(
+      defaultOpen,
+      open,
+      activePickerIndex,
+      changeOnBlur,
+      startInputRef,
+      endInputRef,
+      getValue(selectedValue, 0),
+      getValue(selectedValue, 1),
+      mergedDisabled,
+      onOpenChange,
+    );
 
   const startOpen = mergedOpen && mergedActivePickerIndex === 0;
   const endOpen = mergedOpen && mergedActivePickerIndex === 1;
@@ -907,7 +910,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   function renderPanels() {
     let panels: React.ReactNode;
-    let showDoublePanel = false
+    let showDoublePanel = false;
     const extraNode = getExtraFooter(
       prefixCls,
       mergedModes[mergedActivePickerIndex],
@@ -940,7 +943,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       const nextViewDate = getClosingViewDate(viewDate, picker, generateConfig);
       const currentMode = mergedModes[mergedActivePickerIndex];
 
-      if (currentMode === picker) showDoublePanel = true
+      if (currentMode === picker) showDoublePanel = true;
       const leftPanel = renderPanel(showDoublePanel ? 'left' : false, {
         pickerValue: viewDate,
         onPickerValueChange: (newViewDate) => {
@@ -976,9 +979,9 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       panels = renderPanel();
     }
 
-    let classNamePanels = `${prefixCls}-panels`
-    if (showDoublePanel) classNamePanels += ` ${prefixCls}-panels-double`
-    if (vertical) classNamePanels += ` ${prefixCls}-panels-vertical`
+    let classNamePanels = `${prefixCls}-panels`;
+    if (showDoublePanel) classNamePanels += ` ${prefixCls}-panels-double`;
+    if (vertical) classNamePanels += ` ${prefixCls}-panels-vertical`;
 
     let mergedNodes: React.ReactNode = (
       <div className={`${prefixCls}-panel-layout`}>
@@ -1105,6 +1108,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const onContextSelect = (date: DateType, type: 'key' | 'mouse' | 'submit') => {
     const values = updateValues(selectedValue, date, mergedActivePickerIndex);
 
+    // Switch
+    const nextActivePickerIndex = mergedActivePickerIndex === 0 ? 1 : 0;
+    const index = mergedDisabled[nextActivePickerIndex] ? false : mergedActivePickerIndex;
+
     if (type === 'submit' || (type !== 'key' && !needConfirmButton)) {
       // triggerChange will also update selected values
       triggerChange(values, mergedActivePickerIndex);
@@ -1115,16 +1122,14 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         onEndLeave();
       }
 
-      // Switch
-      const nextActivePickerIndex = mergedActivePickerIndex === 0 ? 1 : 0;
-      if (mergedDisabled[nextActivePickerIndex]) {
-        triggerOpen(false, false, 'confirm');
-      } else {
-        triggerOpen(false, mergedActivePickerIndex, 'confirm');
-      }
-    } else {
-      setSelectedValue(values);
+      triggerOpen(false, index, 'confirm');
+
+      return;
     }
+
+    if (okBtn && !withTime) focusNextInput(index, 'confirm');
+
+    setSelectedValue(values);
   };
 
   return (
