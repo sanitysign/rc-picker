@@ -201,7 +201,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const withTime = (picker === 'date' && !!showTime) || picker === 'time'
+  const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
 
   const presetList = usePresets(presets);

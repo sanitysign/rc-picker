@@ -1,51 +1,16 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import Picker from '../src';
 import { RangePicker } from '../src';
 import dayjsGenerateConfig from '../src/generate/dayjs';
-import dayjs from 'dayjs';
+import type { PresetDate } from '@/interface';
+import type { RangeValue } from '@/interface';
+import CalendarLocaleRu from '../src/locale/ru_RU';
+import CalendarLocaleEn from '../src/locale/en_US';
 
 import RangeSeparator from './Datepicker/RangeSeparator';
 
 import './index.scss';
-
-const locale = {
-  placeholder: 'Select date',
-  yearPlaceholder: 'Select year',
-  quarterPlaceholder: 'Select quarter',
-  monthPlaceholder: 'Select month',
-  weekPlaceholder: 'Select week',
-  rangePlaceholder: ['Start date', 'End date'],
-  rangeYearPlaceholder: ['Start year', 'End year'],
-  rangeQuarterPlaceholder: ['Start quarter', 'End quarter'],
-  rangeMonthPlaceholder: ['Start month', 'End month'],
-  rangeWeekPlaceholder: ['Start week', 'End week'],
-  locale: 'en_US',
-  today: 'Today',
-  now: 'Now',
-  backToToday: 'Back to today',
-  ok: 'OK',
-  clear: 'Clear',
-  month: 'Month',
-  year: 'Year',
-  timeSelect: 'select time',
-  dateSelect: 'select date',
-  weekSelect: 'Choose a week',
-  monthSelect: 'Choose a month',
-  yearSelect: 'Choose a year',
-  decadeSelect: 'Choose a decade',
-  yearFormat: 'YYYY',
-  dateFormat: 'M/D/YYYY',
-  dayFormat: 'D',
-  dateTimeFormat: 'M/D/YYYY HH:mm:ss',
-  monthBeforeYear: true,
-  previousMonth: 'Previous month (PageUp)',
-  nextMonth: 'Next month (PageDown)',
-  previousYear: 'Last year (Control + left)',
-  nextYear: 'Next year (Control + right)',
-  previousDecade: 'Last decade',
-  nextDecade: 'Next decade',
-  previousCentury: 'Last century',
-  nextCentury: 'Next century',
-};
 
 const NavIcon = ({ isNext = false }) => {
   return (
@@ -122,26 +87,13 @@ const ClearIcon = () => {
   );
 };
 
-const singlePresets = [
-  { label: 'Yesterday', value: dayjs().add(-1, 'd') },
-  { label: 'Last Week', value: dayjs().add(-7, 'd') },
-  { label: 'Last Month', value: dayjs().add(-1, 'month') },
-];
-
-const rangePresets: any = [
-  { label: 'Last 7 Days', value: [dayjs().add(-7, 'd'), dayjs()] },
-  { label: 'Last 14 Days', value: [dayjs().add(-14, 'd'), dayjs()] },
-  { label: 'Last 30 Days', value: [dayjs().add(-30, 'd'), dayjs()] },
-  { label: 'Last 90 Days', value: [dayjs().add(-90, 'd'), dayjs()] },
-];
-
 const props = {
   separator: <RangeSeparator />,
   onOk: (val) => {
     // console.log(val)
   },
   generateConfig: dayjsGenerateConfig,
-  locale: locale,
+  locale: CalendarLocaleEn,
   superPrevIcon: <NavIconSuper />,
   prevIcon: <NavIcon />,
   superNextIcon: <NavIconSuper isNext />,
@@ -153,16 +105,83 @@ const props = {
     clearIcon: <ClearIcon />,
   },
   showAllNavButtons: false,
-  vertical: false,
-  okBtn: true,
+  vertical: true,
+  // okBtn: true,
+  format: "D MMM YYYY"
 };
+
+// console.log(dayjs().weekday(1).toDate())
+// console.log(dayjs().startOf('w').toDate());
+
+const rangePresets: PresetDate<RangeValue<dayjs.Dayjs>>[] = [
+  {
+    label: 'Вчера',
+    value: () => {
+      const now = dayjs();
+      return [now.add(-1, 'd'), now.add(-1, 'd')];
+    },
+  },
+  {
+    label: 'Текущая неделя',
+    value: () => {
+      const now = dayjs();
+      return [now.startOf('w').add(1, 'd'), now];
+    },
+  },
+  {
+    label: 'Последние 7 дней',
+    value: () => {
+      const now = dayjs();
+      return [now.add(-7, 'd'), now.add(-1, 'd')];
+    },
+  },
+  {
+    label: 'Прошлая неделя',
+    value: () => {
+      const prevWeek = dayjs().add(-1, 'w');
+      return [prevWeek.startOf('w').add(1, 'd'), prevWeek.endOf('w').add(1, 'd')];
+    },
+  },
+  {
+    label: 'Последние 14 дней',
+    value: () => {
+      const now = dayjs();
+      return [now.add(-14, 'd'), now.add(-1, 'd')];
+    },
+  },
+  {
+    label: 'Текущий месяц',
+    value: () => {
+      const now = dayjs();
+      return [now.startOf('M'), now];
+    },
+  },
+  {
+    label: 'Последние 30 дней',
+    value: () => {
+      const now = dayjs();
+      return [now.add(-30, 'd'), now.add(-1, 'd')];
+    },
+  },
+  {
+    label: 'Прошлый месяц',
+    value: () => {
+      const prevMonth = dayjs().add(-1, 'M');
+      return [prevMonth.startOf('M'), prevMonth.endOf('M')];
+    },
+  },
+];
 
 const App = () => {
   return (
     <div>
       <div className="pickers-row">
         <Picker {...props} placeholder="Select date" />
-        <RangePicker {...props} placeholder={['Select start date', 'Select end date']} />
+        <RangePicker
+          {...props}
+          placeholder={['Select start date', 'Select end date']}
+          presets={rangePresets}
+        />
         {/* <RangePicker {...props} placeholder={["Select start date", "Select end date"]} presets={rangePresets} showTime/> */}
       </div>
 
