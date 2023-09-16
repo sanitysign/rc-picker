@@ -11,6 +11,8 @@ module.exports = {
     'no-confusing-arrow': 0,
     'jsx-a11y/no-autofocus': 0,
     'jsx-a11y/heading-has-content': 0,
+    'react/self-closing-comp': 0,
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/ban-types': [
       'warn',
       {

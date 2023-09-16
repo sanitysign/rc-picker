@@ -6,6 +6,7 @@ import warning from 'rc-util/lib/warning';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { PickerPanelProps } from '.';
+import { RangeSeparator, SuffixIcon } from './components/icons';
 import type { GenerateConfig } from './generate';
 import { useCellRender } from './hooks/useCellRender';
 import useHoverValue from './hooks/useHoverValue';
@@ -217,7 +218,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     picker = 'date',
     showTime,
     use12Hours,
-    separator = '~',
+    separator = <RangeSeparator prefixCls={prefixCls} />,
     value,
     defaultValue,
     defaultPickerValue,
@@ -1039,7 +1040,9 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   // ============================= Icons =============================
   let suffixNode: React.ReactNode;
-  if (suffixIcon) {
+  if (suffixIcon === true) {
+    suffixNode = <SuffixIcon prefixCls={prefixCls} />;
+  } else if (suffixIcon) {
     suffixNode = (
       <span
         className={`${prefixCls}-suffix`}

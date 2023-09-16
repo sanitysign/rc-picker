@@ -12,6 +12,7 @@ $background-color: rgb(255, 240, 255);
   border-radius: 6px;
   transition: border 0.2s, box-shadow 0.2s;
   --rc-picker-accent-color: #1677ff;
+  background-color: #fff;
   $that: &;
 
   &:hover {
@@ -79,8 +80,8 @@ $background-color: rgb(255, 240, 255);
         }
       }
 
-      #{$that}-nav-icon,
-      #{$that}-nav-icon-super {
+      #{$that}-header-nav-icon,
+      #{$that}-header-nav-icon-super {
         &-prev {
           transform: rotate(135deg);
         }
@@ -194,8 +195,8 @@ $background-color: rgb(255, 240, 255);
   }
 
   //Nav Icons
-  &-nav-icon,
-  &-nav-icon-super {
+  &-header-nav-icon,
+  &-header-nav-icon-super {
     position: relative;
     display: inline-block;
     width: 6px;
@@ -235,16 +236,16 @@ $background-color: rgb(255, 240, 255);
     }
   }
 
-  &-nav-icon {
+  &-header-nav-icon {
     &:before {
-      content: "";
+      content: '';
     }
   }
 
-  &-nav-icon-super {
+  &-header-nav-icon-super {
     &:before,
     &:after {
-      content: "";
+      content: '';
     }
   }
 
@@ -307,7 +308,7 @@ $background-color: rgb(255, 240, 255);
     &-range-start,
     &-range-end {
       &:before {
-        content: "";
+        content: '';
         background-color: var(--rc-picker-range-color);
       }
 
@@ -339,7 +340,7 @@ $background-color: rgb(255, 240, 255);
         border: 1px dashed var(--rc-picker-range-outline-color);
         border-right: 0;
         border-left: 0;
-        content: "";
+        content: '';
         pointer-events: none;
       }
     }
@@ -469,7 +470,7 @@ $background-color: rgb(255, 240, 255);
       &:not(&-selected):not(&-range-start):not(&-range-end):hover {
         #{$that}-cell {
           &:before {
-            content: "";
+            content: '';
             background-color: var(--rc-picker-hover-color);
           }
         }
@@ -479,7 +480,7 @@ $background-color: rgb(255, 240, 255);
         &-hover {
           #{$that}-cell {
             &:before {
-              content: "";
+              content: '';
               background-color: var(--rc-picker-range-hover-color);
             }
           }
@@ -493,7 +494,7 @@ $background-color: rgb(255, 240, 255);
           opacity: 1;
 
           &:before {
-            content: "";
+            content: '';
             background-color: var(--rc-picker-accent-color);
           }
 
@@ -736,7 +737,7 @@ $background-color: rgb(255, 240, 255);
       margin-inline-start: $arrow-size;
 
       &::before {
-        content: "";
+        content: '';
         width: $arrow-size;
         height: $arrow-size;
         left: 0;
@@ -798,7 +799,8 @@ $background-color: rgb(255, 240, 255);
     vertical-align: top;
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0 9px 28px 8px rgba(0, 0, 0, 0.05);
     transition: margin 0.3s;
   }
 
@@ -806,5 +808,13 @@ $background-color: rgb(255, 240, 255);
     display: flex;
     flex-wrap: nowrap;
     align-items: stretch;
+  }
+
+  &-panels {
+    display: flex;
+
+    &-vertical {
+      flex-direction: column;
+    }
   }
 }

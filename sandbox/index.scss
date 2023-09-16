@@ -12,6 +12,7 @@ $background-color: rgb(255, 240, 255);
   border-radius: 6px;
   transition: border 0.2s, box-shadow 0.2s;
   --rc-picker-accent-color: #1677ff;
+  background-color: #fff;
   $that: &;
 
   &:hover {
@@ -79,8 +80,8 @@ $background-color: rgb(255, 240, 255);
         }
       }
 
-      #{$that}-nav-icon,
-      #{$that}-nav-icon-super {
+      #{$that}-header-nav-icon,
+      #{$that}-header-nav-icon-super {
         &-prev {
           transform: rotate(135deg);
         }
@@ -194,8 +195,8 @@ $background-color: rgb(255, 240, 255);
   }
 
   //Nav Icons
-  &-nav-icon,
-  &-nav-icon-super {
+  &-header-nav-icon,
+  &-header-nav-icon-super {
     position: relative;
     display: inline-block;
     width: 6px;
@@ -235,13 +236,13 @@ $background-color: rgb(255, 240, 255);
     }
   }
 
-  &-nav-icon {
+  &-header-nav-icon {
     &:before {
       content: '';
     }
   }
 
-  &-nav-icon-super {
+  &-header-nav-icon-super {
     &:before,
     &:after {
       content: '';
@@ -638,6 +639,15 @@ $background-color: rgb(255, 240, 255);
       border-radius: 0;
       transition: all 0.2s;
       border: none;
+
+      //this is necessary if placeholder's text starts overflowing
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &::placeholder {
+        font-size: 13px;
+      }
 
       &:focus {
         outline: none;

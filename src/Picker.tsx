@@ -38,6 +38,7 @@ import { getClearIcon } from './utils/getClearIcon';
 import { toArray } from './utils/miscUtil';
 import { elementsContains, getDefaultFormat, getInputSize } from './utils/uiUtil';
 import { legacyPropsWarning } from './utils/warnUtil';
+import { SuffixIcon } from './components/icons';
 
 export type PickerRefConfig = {
   focus: () => void;
@@ -470,7 +471,9 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   );
 
   let suffixNode: React.ReactNode;
-  if (suffixIcon) {
+  if (suffixIcon === true) {
+    suffixNode = <SuffixIcon prefixCls={prefixCls}/>
+  } else if (suffixIcon) {
     suffixNode = (
       <span
         className={`${prefixCls}-suffix`}

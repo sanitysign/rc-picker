@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NextIcon, PrevIcon, SuperNextIcon, SuperPrevIcon } from '../components/icons';
 import PanelContext from '../PanelContext';
 
 const HIDDEN_STYLE: React.CSSProperties = {
@@ -28,10 +29,10 @@ export type HeaderProps = {
 
 function Header({
   prefixCls,
-  prevIcon = '\u2039',
-  nextIcon = '\u203A',
-  superPrevIcon = '\u00AB',
-  superNextIcon = '\u00BB',
+  prevIcon = <PrevIcon prefixCls={prefixCls}/>,
+  nextIcon = <NextIcon prefixCls={prefixCls}/>,
+  superPrevIcon = <SuperPrevIcon prefixCls={prefixCls}/>,
+  superNextIcon = <SuperNextIcon prefixCls={prefixCls}/>,
   onSuperPrev,
   onSuperNext,
   onPrev,

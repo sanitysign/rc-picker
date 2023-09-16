@@ -189,7 +189,7 @@ export function getInputSize<DateType>(
   const defaultSize = picker === 'time' ? 8 : 10;
   const length =
     typeof format === 'function' ? format(generateConfig.getNow()).length : format.length;
-  return Math.max(defaultSize, length) + 2;
+  return Math.max(defaultSize, length) + 1;
 }
 
 // ===================== Window =====================
