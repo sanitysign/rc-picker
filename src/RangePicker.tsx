@@ -263,6 +263,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     vertical,
     okBtn,
     preventOnBlurWhileOpen = true,
+    openOnFocus = true,
   } = props as MergedRangePickerProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -775,6 +776,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       focus: () => {
         if (startInputRef.current) {
           startInputRef.current.focus();
+          if (openOnFocus) triggerOpen(true, 0, 'open');;
         }
       },
       blur: () => {

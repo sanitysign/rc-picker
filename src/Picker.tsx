@@ -110,6 +110,10 @@ export type PickerSharedProps<DateType> = {
 
   autoComplete?: string;
   direction?: 'ltr' | 'rtl';
+
+  // new props
+  preventOnBlurWhileOpen?: boolean;
+  openOnFocus?: boolean;
 } & React.AriaAttributes;
 
 type OmitPanelProps<Props> = Omit<
@@ -199,6 +203,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     changeOnBlur,
     okBtn,
     preventOnBlurWhileOpen = true,
+    openOnFocus = true,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -400,6 +405,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     pickerRef.current = {
       focus: () => {
         inputRef.current?.focus();
+        if (openOnFocus) triggerOpen(true);
       },
       blur: () => {
         inputRef.current?.blur();
