@@ -47,6 +47,7 @@ export type PickerRefConfig = {
 
 export type PickerSharedProps<DateType> = {
   dropdownClassName?: string;
+  inputClassName?: string;
   dropdownAlign?: AlignType;
   popupStyle?: React.CSSProperties;
   transitionName?: string;
@@ -159,6 +160,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     style,
     className,
     dropdownClassName,
+    inputClassName,
     dropdownAlign,
     popupStyle,
     transitionName,
@@ -547,6 +549,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     name,
     ...pickAttrs(props, { aria: true, data: true }),
     autoComplete,
+    className: classNames(`${prefixCls}-input-element`, inputClassName),
   };
 
   const inputNode: React.ReactNode = inputRender ? (

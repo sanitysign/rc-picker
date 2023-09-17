@@ -1,4 +1,16 @@
-$background-color: rgb(255, 240, 255);
+:root {
+  --rc-picker-accent-color: #1677ff;
+  --rc-picker-focus-color: #4096ff;
+  --rc-picker-header-color: #0d64de;
+  --rc-picker-range-color: #e6f4ff;
+  --rc-picker-background-color: #fff;
+  --rc-picker-range-hover-color: #c8dfff;
+  --rc-picker-hover-color: rgba(0, 0, 0, 0.05);
+  --rc-picker-range-outline-color: #7cb3ff;
+  --rc-picker-cell-border-radius: 4px;
+  --rc-picker-border-color: rgba(5, 5, 5, 0.06);
+  --rc-picker-scrollbar-color: rgba(5, 5, 5, 0.2);
+}
 
 .rc-picker {
   margin: 0;
@@ -11,8 +23,7 @@ $background-color: rgb(255, 240, 255);
   border: 1px solid #d9d9d9;
   border-radius: 6px;
   transition: border 0.2s, box-shadow 0.2s;
-  --rc-picker-accent-color: #1677ff;
-  background-color: #fff;
+  background-color: var(--rc-picker-background-color);
   $that: &;
 
   &:hover {
@@ -36,19 +47,7 @@ $background-color: rgb(255, 240, 255);
 
   &-focused {
     outline: none;
-    border-color: #4096ff;
-  }
-
-  &-dropdown {
-    --rc-picker-accent-color: #1677ff;
-    --rc-picker-header-color: #0d64de;
-    --rc-picker-range-color: #e6f4ff;
-    --rc-picker-range-hover-color: #c8dfff;
-    --rc-picker-hover-color: rgba(0, 0, 0, 0.05);
-    --rc-picker-range-outline-color: #7cb3ff;
-    --rc-picker-cell-border-radius: 4px;
-    --rc-picker-border-color: rgba(5, 5, 5, 0.06);
-    --rc-picker-scrollbar-color: rgba(5, 5, 5, 0.2);
+    border-color: var(--rc-picker-focus-color);
   }
 
   &-panel {
@@ -56,13 +55,8 @@ $background-color: rgb(255, 240, 255);
     flex-direction: column;
     text-align: center;
     vertical-align: top;
-    // border: 1px solid rgba(5, 5, 5, 0.06); // TODO return this after you figured out how to apply .rc-picker-panel-focused to .rc-picker-panels
     border-radius: 8px;
     outline: none;
-
-    &-focused {
-      border-color: var(--rc-picker-accent-color);
-    }
 
     &-rtl {
       direction: rtl;
@@ -164,9 +158,13 @@ $background-color: rgb(255, 240, 255);
     }
 
     &-view {
+      padding: 10px 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       text-align: center;
       font-weight: 600;
-      line-height: 36px;
       flex-grow: 1;
 
       > button {
@@ -180,6 +178,8 @@ $background-color: rgb(255, 240, 255);
         cursor: pointer;
         transition: color 0.2s;
         font-size: inherit;
+        flex-shrink: 0;
+        line-height: 1;
 
         &:after {
           content: '';
@@ -192,10 +192,6 @@ $background-color: rgb(255, 240, 255);
           background-color: currentColor;
           opacity: 0.3;
           transition: opacity 0.2s;
-        }
-
-        &:nth-child(2) {
-          margin-left: 8px;
         }
 
         &:hover {
@@ -656,6 +652,7 @@ $background-color: rgb(255, 240, 255);
     display: inline-flex;
     align-items: center;
     width: 100%;
+    background-color: inherit;
 
     > input {
       width: 100%;
@@ -663,7 +660,7 @@ $background-color: rgb(255, 240, 255);
       padding: 0;
       color: inherit;
       font-size: inherit;
-      background-color: #fff;
+      background-color: inherit;
       border-radius: 0;
       transition: all 0.2s;
       border: none;
@@ -717,7 +714,7 @@ $background-color: rgb(255, 240, 255);
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s, color 0.2s;
-    background-color: #fff;
+    background-color: inherit;
 
     &-icon {
       opacity: 0.5;
@@ -781,7 +778,7 @@ $background-color: rgb(255, 240, 255);
         position: absolute;
         bottom: calc($arrow-size / -1.41);
         border-radius: 2px 0 0 0;
-        background-color: #fff;
+        background-color: var(--rc-picker-background-color);
         transform: rotate(45deg);
         box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
       }
@@ -834,7 +831,7 @@ $background-color: rgb(255, 240, 255);
   &-panel-container {
     overflow: hidden;
     vertical-align: top;
-    background: #fff;
+    background: var(--rc-picker-background-color);
     border-radius: 8px;
     box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
       0 9px 28px 8px rgba(0, 0, 0, 0.05);

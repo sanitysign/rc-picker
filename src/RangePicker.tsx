@@ -207,6 +207,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     className,
     popupStyle,
     dropdownClassName,
+    inputClassName,
     transitionName,
     dropdownAlign,
     getPopupContainer,
@@ -776,7 +777,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       focus: () => {
         if (startInputRef.current) {
           startInputRef.current.focus();
-          if (openOnFocus) triggerOpen(true, 0, 'open');;
+          if (openOnFocus) triggerOpen(true, 0, 'open');
         }
       },
       blur: () => {
@@ -1100,6 +1101,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const inputSharedProps = {
     size: getInputSize(picker, formatList[0], generateConfig),
     name,
+    className: classNames(`${prefixCls}-input-element`, inputClassName),
   };
 
   let activeBarLeft: number = 0;

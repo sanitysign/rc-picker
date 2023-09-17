@@ -1,6 +1,6 @@
 {
   "name": "@sanitysign/rc-picker",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "description": "React date & time picker",
   "keywords": [
     "react",
@@ -12,7 +12,6 @@
   "module": "./es/index",
   "files": [
     "assets/*.css",
-    "assets/*.css.map",
     "assets/*.scss",
     "es",
     "lib"
@@ -25,7 +24,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npm --prefix ./sandbox run start",
-    "build": "father build && sass sandbox/index.scss assets/index.css && copyfiles sandbox/index.scss assets --flat",
+    "build": "father build && sass --no-source-map sandbox/index.scss assets/index.css && copyfiles sandbox/index.scss assets --flat",
     "docs:dev": "dumi dev",
     "docs:build": "dumi build",
     "gh-pages": "npm run build && father doc deploy",
