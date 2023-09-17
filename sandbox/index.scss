@@ -41,6 +41,7 @@ $background-color: rgb(255, 240, 255);
 
   &-dropdown {
     --rc-picker-accent-color: #1677ff;
+    --rc-picker-header-color: #0d64de;
     --rc-picker-range-color: #e6f4ff;
     --rc-picker-range-hover-color: #c8dfff;
     --rc-picker-hover-color: rgba(0, 0, 0, 0.05);
@@ -170,6 +171,7 @@ $background-color: rgb(255, 240, 255);
 
       > button {
         padding: 0;
+        position: relative;
         border: 0;
         color: inherit;
         font-weight: inherit;
@@ -179,16 +181,37 @@ $background-color: rgb(255, 240, 255);
         transition: color 0.2s;
         font-size: inherit;
 
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          bottom: 0px;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background-color: currentColor;
+          opacity: 0.3;
+          transition: opacity 0.2s;
+        }
+
         &:nth-child(2) {
           margin-left: 8px;
         }
 
         &:hover {
           color: var(--rc-picker-accent-color);
+
+          &:after {
+            opacity: 1;
+          }
         }
 
         &:focus-visible {
           color: var(--rc-picker-accent-color);
+
+          &:after {
+            opacity: 1;
+          }
         }
       }
     }
@@ -260,6 +283,11 @@ $background-color: rgb(255, 240, 255);
       min-width: 24px;
       font-weight: 400;
       padding-block: 4px;
+    }
+
+    th {
+      color: var(--rc-picker-header-color);
+      font-weight: 600;
     }
   }
 
