@@ -94,6 +94,7 @@ export type PickerPanelSharedProps<DateType> = {
   showAllNavButtons?: boolean;
   vertical?: boolean;
   okBtn?: boolean;
+  preventOnBlurWhileOpen?: boolean;
 };
 
 export type PickerPanelBaseProps<DateType> = {

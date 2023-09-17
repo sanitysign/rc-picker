@@ -17,6 +17,7 @@ import useMergedState from 'rc-util/lib/hooks/useMergedState';
 import pickAttrs from 'rc-util/lib/pickAttrs';
 import warning from 'rc-util/lib/warning';
 import * as React from 'react';
+import { SuffixIcon } from './components/icons';
 import useHoverValue from './hooks/useHoverValue';
 import usePickerInput from './hooks/usePickerInput';
 import usePresets from './hooks/usePresets';
@@ -38,7 +39,6 @@ import { getClearIcon } from './utils/getClearIcon';
 import { toArray } from './utils/miscUtil';
 import { elementsContains, getDefaultFormat, getInputSize } from './utils/uiUtil';
 import { legacyPropsWarning } from './utils/warnUtil';
-import { SuffixIcon } from './components/icons';
 
 export type PickerRefConfig = {
   focus: () => void;
@@ -198,6 +198,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     inputRender,
     changeOnBlur,
     okBtn,
+    preventOnBlurWhileOpen = true,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -329,6 +330,8 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   const [inputProps, { focused, typing }] = usePickerInput({
     blurToCancel: needConfirmButton,
     open: mergedOpen,
+    mergedOpen,
+    preventOnBlurWhileOpen,
     value: text,
     triggerOpen,
     forwardKeyDown,
@@ -472,7 +475,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   let suffixNode: React.ReactNode;
   if (suffixIcon === true) {
-    suffixNode = <SuffixIcon prefixCls={prefixCls}/>
+    suffixNode = <SuffixIcon prefixCls={prefixCls} />;
   } else if (suffixIcon) {
     suffixNode = (
       <span

@@ -202,6 +202,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const {
     prefixCls = 'rc-picker',
     id,
+    name,
     style,
     className,
     popupStyle,
@@ -261,6 +262,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     changeOnBlur,
     vertical,
     okBtn,
+    preventOnBlurWhileOpen = true,
   } = props as MergedRangePickerProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -585,6 +587,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   };
 
   const getSharedInputHookProps = (index: 0 | 1, resetText: () => void) => ({
+    mergedOpen,
+    preventOnBlurWhileOpen,
     blurToCancel: !changeOnBlur && needConfirmButton,
     forwardKeyDown,
     onBlur: onInternalBlur,
@@ -1093,6 +1097,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   const inputSharedProps = {
     size: getInputSize(picker, formatList[0], generateConfig),
+    name,
   };
 
   let activeBarLeft: number = 0;
