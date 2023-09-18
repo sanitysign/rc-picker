@@ -95,7 +95,8 @@ const App = () => {
         <Picker {...props} placeholder="Select date" />
         <RangePicker
           {...props}
-          placeholder={['Select start date', 'Select end date']}
+          placeholderStart="Select start date"
+          placeholderEnd="Select end date"
           presets={rangePresets}
           ref={ref as any}
         />

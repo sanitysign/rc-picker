@@ -47,7 +47,7 @@ import {
 import { getClearIcon } from './utils/getClearIcon';
 import getExtraFooter from './utils/getExtraFooter';
 import getRanges from './utils/getRanges';
-import { getValue, toArray, updateValues } from './utils/miscUtil';
+import { getRangePlaceholder, getValue, toArray, updateValues } from './utils/miscUtil';
 import { elementsContains, getDefaultFormat, getInputSize } from './utils/uiUtil';
 import { legacyPropsWarning } from './utils/warnUtil';
 
@@ -105,6 +105,8 @@ export type RangePickerSharedProps<DateType> = {
    */
   defaultPickerValue?: [DateType, DateType];
   placeholder?: [string, string];
+  placeholderStart?: string;
+  placeholderEnd?: string;
   disabled?: boolean | [boolean, boolean];
   disabledTime?: (date: EventValue<DateType>, type: RangeType) => DisabledTimes;
   presets?: PresetDate<Exclude<RangeValue<DateType>, null>>[];
@@ -214,6 +216,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     generateConfig,
     locale,
     placeholder,
+    placeholderStart,
+    placeholderEnd,
     autoFocus,
     disabled,
     format,
@@ -1199,7 +1203,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
                 triggerStartTextChange(e.target.value);
               }}
               autoFocus={autoFocus}
-              placeholder={getValue(placeholder, 0) || ''}
+              placeholder={getRangePlaceholder({ placeholder, placeholderStart, index: 0 })}
               ref={startInputRef}
               {...startInputProps}
               {...inputSharedProps}
@@ -1223,7 +1227,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
               onChange={(e) => {
                 triggerEndTextChange(e.target.value);
               }}
-              placeholder={getValue(placeholder, 1) || ''}
+              placeholder={getRangePlaceholder({ placeholder, placeholderEnd, index: 1 })}
               ref={endInputRef}
               {...endInputProps}
               {...inputSharedProps}
