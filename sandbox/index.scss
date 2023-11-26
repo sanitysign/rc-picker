@@ -421,6 +421,11 @@
       &:hover {
         background-color: rgba(0, 0, 0, 0.04);
       }
+
+      &.is-active-date {
+        color: #fff;
+        background-color: var(--rc-picker-header-color);
+      }
     }
   }
 

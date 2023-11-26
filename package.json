@@ -1,6 +1,6 @@
 {
   "name": "@sanitysign/rc-picker",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "React date & time picker",
   "keywords": [
     "react",

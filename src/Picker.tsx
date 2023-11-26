@@ -434,13 +434,15 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   let panelNode: React.ReactNode = (
     <div className={`${prefixCls}-panel-layout`}>
-      <PresetPanel
+      <PresetPanel<DateType, DateType>
         prefixCls={prefixCls}
         presets={presetList}
         onClick={(nextValue) => {
           triggerChange(nextValue);
           triggerOpen(false);
         }}
+        generateConfig={generateConfig}
+        prevValue={selectedValue}
       />
       <PickerPanel<DateType>
         {...panelProps}

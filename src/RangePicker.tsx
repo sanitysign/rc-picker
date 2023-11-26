@@ -997,7 +997,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
     let mergedNodes: React.ReactNode = (
       <div className={`${prefixCls}-panel-layout`}>
-        <PresetPanel
+        <PresetPanel<RangeValue<DateType>, DateType>
           prefixCls={prefixCls}
           presets={presetList}
           onClick={(nextValue) => {
@@ -1007,6 +1007,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           onHover={(hoverValue) => {
             setRangeHoverValue(hoverValue);
           }}
+          generateConfig={generateConfig}
+          prevValue={selectedValue}
         />
         <div>
           <div className={classNamePanels}>{panels}</div>
