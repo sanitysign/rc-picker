@@ -18,6 +18,7 @@ import pickAttrs from 'rc-util/lib/pickAttrs';
 import warning from 'rc-util/lib/warning';
 import * as React from 'react';
 import { SuffixIcon } from './components/icons';
+import type { ModifyCellClassNamesT } from './hooks/useCellClassName';
 import useHoverValue from './hooks/useHoverValue';
 import usePickerInput from './hooks/usePickerInput';
 import usePresets from './hooks/usePresets';
@@ -33,6 +34,7 @@ import type {
 } from './PickerPanel';
 import PickerPanel from './PickerPanel';
 import PickerTrigger from './PickerTrigger';
+import type { PresetComponentT } from './PresetPanel';
 import PresetPanel from './PresetPanel';
 import { formatValue, isEqual, parseValue } from './utils/dateUtil';
 import { getClearIcon } from './utils/getClearIcon';
@@ -43,6 +45,7 @@ import { legacyPropsWarning } from './utils/warnUtil';
 export type PickerRefConfig = {
   focus: () => void;
   blur: () => void;
+  open: () => void;
 };
 
 export type PickerSharedProps<DateType> = {
@@ -52,6 +55,7 @@ export type PickerSharedProps<DateType> = {
   popupStyle?: React.CSSProperties;
   transitionName?: string;
   placeholder?: string;
+  placeholderInner?: string;
   allowClear?: boolean | { clearIcon?: React.ReactNode };
   autoFocus?: boolean;
   disabled?: boolean;
@@ -81,6 +85,10 @@ export type PickerSharedProps<DateType> = {
   getPopupContainer?: (node: HTMLElement) => HTMLElement;
   panelRender?: (originPanel: React.ReactNode) => React.ReactNode;
   inputRender?: (props: React.InputHTMLAttributes<HTMLInputElement>) => React.ReactNode;
+  innerInputRender?: (
+    props: React.InputHTMLAttributes<HTMLInputElement>,
+    inputIndex: 0 | 1,
+  ) => React.ReactNode;
 
   // Events
   onChange?: (value: DateType | null, dateString: string) => void;
@@ -115,12 +123,22 @@ export type PickerSharedProps<DateType> = {
   // new props
   preventOnBlurWhileOpen?: boolean;
   openOnFocus?: boolean;
-} & React.AriaAttributes;
+  showInput?: boolean;
+  showInnerInput?: boolean;
+  toolbar?: JSX.Element;
+  header?: JSX.Element;
+  panelTop?: JSX.Element;
+  isClickInsidePicker?: (target: EventTarget) => boolean;
+  PresetComponent?: PresetComponentT<PresetDate<DateType>['value']>;
+} & ModifyCellClassNamesT<DateType> &
+  React.AriaAttributes;
 
 type OmitPanelProps<Props> = Omit<
   Props,
   'onChange' | 'hideHeader' | 'pickerValue' | 'onPickerValueChange'
 >;
+
+export type PresetComponentSingle<DateType> = PickerSharedProps<DateType>['PresetComponent'];
 
 export type PickerBaseProps<DateType> = {} & PickerSharedProps<DateType> &
   OmitPanelProps<PickerPanelBaseProps<DateType>>;
@@ -147,6 +165,7 @@ export type PickerProps<DateType> =
 type OmitType<DateType> = Omit<PickerBaseProps<DateType>, 'picker'> &
   Omit<PickerDateProps<DateType>, 'picker'> &
   Omit<PickerTimeProps<DateType>, 'picker'>;
+
 type MergedPickerProps<DateType> = {
   picker?: PickerMode;
 } & OmitType<DateType>;
@@ -184,6 +203,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     disabled,
     disabledDate,
     placeholder,
+    placeholderInner,
     getPopupContainer,
     pickerRef,
     panelRender,
@@ -202,13 +222,22 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     direction,
     autoComplete = 'off',
     inputRender,
+    innerInputRender,
     changeOnBlur,
     okBtn,
     preventOnBlurWhileOpen = true,
     openOnFocus = true,
+    showInput = true,
+    showInnerInput = false,
+    toolbar,
+    header,
+    panelTop,
+    isClickInsidePicker,
+    PresetComponent,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const innerInputRef = React.useRef<HTMLInputElement>(null);
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
@@ -342,11 +371,18 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     value: text,
     triggerOpen,
     forwardKeyDown,
-    isClickOutside: (target) =>
-      !elementsContains(
+    isClickOutside: (target) => {
+      const contains = elementsContains(
         [panelDivRef.current, inputDivRef.current, containerRef.current],
         target as HTMLElement,
-      ),
+      );
+
+      if (contains) return false;
+
+      if (target && typeof isClickInsidePicker === 'function') return !isClickInsidePicker(target);
+
+      return true;
+    },
     onSubmit: () => {
       if (
         // When user typing disabledDate with keyboard and enter, this value will be empty
@@ -412,6 +448,9 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
       blur: () => {
         inputRef.current?.blur();
       },
+      open: () => {
+        triggerOpen(true);
+      },
     };
   }
 
@@ -432,7 +471,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     onChange: null,
   };
 
-  let panelNode: React.ReactNode = (
+  const getPanelNode = () => (
     <div className={`${prefixCls}-panel-layout`}>
       <PresetPanel<DateType, DateType>
         prefixCls={prefixCls}
@@ -443,45 +482,53 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         }}
         generateConfig={generateConfig}
         prevValue={selectedValue}
+        PresetComponent={PresetComponent}
       />
-      <PickerPanel<DateType>
-        {...panelProps}
-        generateConfig={generateConfig}
-        className={classNames({
-          [`${prefixCls}-panel-focused`]: !typing,
-        })}
-        value={selectedValue}
-        locale={locale}
-        tabIndex={-1}
-        onSelect={(date) => {
-          onSelect?.(date);
-          setSelectedValue(date);
-        }}
-        direction={direction}
-        onPanelChange={(viewDate, mode) => {
-          const { onPanelChange } = props;
-          onLeave(true);
-          onPanelChange?.(viewDate, mode);
-        }}
-      />
+      <div className={`${prefixCls}-panels-outer-wrap`}>
+        <PickerPanel<DateType>
+          {...panelProps}
+          generateConfig={generateConfig}
+          className={classNames({
+            [`${prefixCls}-panel-focused`]: !typing,
+          })}
+          value={selectedValue}
+          locale={locale}
+          tabIndex={-1}
+          onSelect={(date) => {
+            onSelect?.(date);
+            setSelectedValue(date);
+          }}
+          direction={direction}
+          onPanelChange={(viewDate, mode) => {
+            const { onPanelChange } = props;
+            onLeave(true);
+            onPanelChange?.(viewDate, mode);
+          }}
+          innerInput={showInnerInput ? getInnerInput() : undefined}
+          toolbar={toolbar}
+          header={header}
+          panelTop={panelTop}
+        />
+      </div>
     </div>
   );
 
-  if (panelRender) {
-    panelNode = panelRender(panelNode);
-  }
+  const getPanel = () => {
+    const panelNode = panelRender ? panelRender(getPanelNode()) : getPanelNode();
 
-  const panel = (
-    <div
-      className={`${prefixCls}-panel-container`}
-      ref={panelDivRef}
-      onMouseDown={(e) => {
-        e.preventDefault();
-      }}
-    >
-      {panelNode}
-    </div>
-  );
+    return (
+      <div
+        className={`${prefixCls}-panel-container`}
+        ref={panelDivRef}
+        onMouseDown={(e) => {
+          if ((e.target as HTMLElement).tagName === 'INPUT') return;
+          e.preventDefault();
+        }}
+      >
+        {panelNode}
+      </div>
+    );
+  };
 
   let suffixNode: React.ReactNode;
   if (suffixIcon === true) {
@@ -531,6 +578,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const mergedAllowClear = !!allowClear && mergedValue && !disabled;
 
+  // ============================= Inputs =============================
   const mergedInputProps: React.InputHTMLAttributes<HTMLInputElement> & {
     ref: React.MutableRefObject<HTMLInputElement>;
   } = {
@@ -559,6 +607,50 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   ) : (
     <input {...mergedInputProps} />
   );
+
+  function getInnerInput() {
+    const mergedInnerInputProps: React.InputHTMLAttributes<HTMLInputElement> & {
+      ref: React.MutableRefObject<HTMLInputElement>;
+    } = {
+      ...mergedInputProps,
+      placeholder: placeholderInner ?? placeholder,
+      className: classNames(mergedInputProps.className, `${prefixCls}-inner-input-element`),
+      ref: innerInputRef,
+    };
+
+    const innerInputNode: React.ReactNode = innerInputRender ? (
+      innerInputRender(mergedInnerInputProps, 0)
+    ) : (
+      <input {...mergedInnerInputProps} />
+    );
+
+    return (
+      <div
+        className={classNames(prefixCls, `${prefixCls}-inner`, className, {
+          [`${prefixCls}-disabled`]: disabled,
+          [`${prefixCls}-focused`]: focused,
+          [`${prefixCls}-rtl`]: direction === 'rtl',
+        })}
+        style={style}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onContextMenu={onContextMenu}
+        onClick={onClick}
+      >
+        <div
+          className={classNames(`${prefixCls}-input`, `${prefixCls}-inner-input`, {
+            [`${prefixCls}-input-placeholder`]: !!hoverValue,
+          })}
+        >
+          {innerInputNode}
+          {suffixNode}
+          {mergedAllowClear && clearNode}
+        </div>
+      </div>
+    );
+  }
 
   // ============================ Warning ============================
   if (process.env.NODE_ENV !== 'production') {
@@ -592,7 +684,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     >
       <PickerTrigger
         visible={mergedOpen}
-        popupElement={panel}
+        popupElement={getPanel()}
         popupStyle={popupStyle}
         prefixCls={prefixCls}
         dropdownClassName={dropdownClassName}
@@ -602,32 +694,37 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         popupPlacement={popupPlacement}
         direction={direction}
       >
-        <div
-          ref={containerRef}
-          className={classNames(prefixCls, className, {
-            [`${prefixCls}-disabled`]: disabled,
-            [`${prefixCls}-focused`]: focused,
-            [`${prefixCls}-rtl`]: direction === 'rtl',
-          })}
-          style={style}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onContextMenu={onContextMenu}
-          onClick={onInternalClick}
-        >
+        {showInput ? (
           <div
-            className={classNames(`${prefixCls}-input`, {
-              [`${prefixCls}-input-placeholder`]: !!hoverValue,
+            ref={containerRef}
+            className={classNames(prefixCls, className, {
+              [`${prefixCls}-disabled`]: disabled,
+              [`${prefixCls}-focused`]: focused,
+              [`${prefixCls}-rtl`]: direction === 'rtl',
             })}
-            ref={inputDivRef}
+            style={style}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onContextMenu={onContextMenu}
+            onClick={onInternalClick}
           >
-            {inputNode}
-            {suffixNode}
-            {mergedAllowClear && clearNode}
+            <div
+              className={classNames(`${prefixCls}-input`, {
+                [`${prefixCls}-input-placeholder`]: !!hoverValue,
+              })}
+              ref={inputDivRef}
+            >
+              {inputNode}
+              {suffixNode}
+              {mergedAllowClear && clearNode}
+            </div>
           </div>
-        </div>
+        ) : (
+          // empty element is necessary to calculate the position of the popup
+          <div></div>
+        )}
       </PickerTrigger>
     </PanelContext.Provider>
   );
@@ -647,6 +744,10 @@ class Picker<DateType> extends React.Component<PickerProps<DateType>> {
     if (this.pickerRef.current) {
       this.pickerRef.current.blur();
     }
+  };
+
+  open = () => {
+    this.pickerRef.current?.open();
   };
 
   render() {

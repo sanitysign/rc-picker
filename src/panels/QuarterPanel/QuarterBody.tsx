@@ -4,6 +4,7 @@ import type { CellRender, Locale } from '../../interface';
 import { formatValue, isSameQuarter } from '../../utils/dateUtil';
 import RangeContext from '../../RangeContext';
 import useCellClassName from '../../hooks/useCellClassName';
+import type { ModifyCellClassNamesT } from '../../hooks/useCellClassName';
 import PanelBody from '../PanelBody';
 
 export const QUARTER_COL_COUNT = 4;
@@ -18,10 +19,10 @@ export type QuarterBodyProps<DateType> = {
   disabledDate?: (date: DateType) => boolean;
   onSelect: (value: DateType) => void;
   cellRender?: CellRender<DateType>;
-};
+} & ModifyCellClassNamesT<DateType>;
 
 function QuarterBody<DateType>(props: QuarterBodyProps<DateType>) {
-  const { prefixCls, locale, value, viewDate, generateConfig, cellRender } = props;
+  const { prefixCls, locale, value, viewDate, generateConfig, cellRender, modifyCellClassNames } = props;
 
   const { rangedValue, hoverRangedValue } = React.useContext(RangeContext);
 
@@ -36,6 +37,7 @@ function QuarterBody<DateType>(props: QuarterBodyProps<DateType>) {
     isSameCell: (current, target) => isSameQuarter(generateConfig, current, target),
     isInView: () => true,
     offsetCell: (date, offset) => generateConfig.addMonth(date, offset * 3),
+    modifyCellClassNames,
   });
 
   const baseQuarter = generateConfig.setDate(generateConfig.setMonth(viewDate, 0), 1);

@@ -3,6 +3,12 @@ body {
   background-color: hsl(220 50% 97% / 1);
 }
 
+.title {
+  text-align: center;
+  font-weight: 400;
+  font-size: 24px;
+}
+
 .pickers-row {
   margin-top: 48px;
   display: flex;
@@ -14,4 +20,18 @@ body {
 
 .spacer {
   min-height: 400px;
+}
+
+.toolbar {
+  .rc-picker-dropdown {
+    position: static;
+  }
+
+  .rc-picker-dropdown-range {
+    padding: 0;
+  }
+
+  .rc-picker-range-arrow {
+    display: none;
+  }
 }

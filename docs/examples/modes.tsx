@@ -4,7 +4,7 @@ import RangePicker from '../../src/RangePicker';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
 import '../../assets/index.scss';
-import './common.less';
+import './common.scss';
 
 const defaultStartValue = moment('2019-09-03 05:02:03');
 const defaultEndValue = moment('2019-11-28 01:02:03');

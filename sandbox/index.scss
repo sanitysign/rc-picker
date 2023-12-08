@@ -114,6 +114,10 @@
     }
   }
 
+  &-inner {
+    display: flex;
+  }
+
   // ===================== Shared Panel =====================
   &-decade-panel,
   &-year-panel,
@@ -847,6 +851,14 @@
     display: flex;
     flex-wrap: nowrap;
     align-items: stretch;
+  }
+
+  &-panel-top {
+    display: flex;
+  }
+
+  &-panels-top {
+    display: flex;
   }
 
   &-panels {

@@ -1,7 +1,46 @@
-import { isInRange } from '../utils/dateUtil';
 import type { GenerateConfig } from '../generate';
-import type { RangeValue, NullableDateType } from '../interface';
+import type { NullableDateType, RangeValue } from '../interface';
+import { isInRange } from '../utils/dateUtil';
 import { getValue } from '../utils/miscUtil';
+
+type MainProps<DateType> = {
+  cellPrefixCls: string;
+  generateConfig: GenerateConfig<DateType>;
+  rangedValue?: RangeValue<DateType>;
+  hoverRangedValue?: RangeValue<DateType>;
+  today?: NullableDateType<DateType>;
+  value?: NullableDateType<DateType>;
+};
+
+export type CellStatuses = {
+  isInView: boolean;
+  isInRange: boolean;
+  isRangeStart: boolean;
+  isRangeEnd: boolean;
+  isRangeStartSingle: boolean;
+  isRangeEndSingle: boolean;
+  isRangeStartNearHover: boolean;
+  isRangeEndNearHover: boolean;
+  isRangeHovered: boolean;
+  isHoverStart: boolean;
+  isHoverEnd: boolean;
+  isHoverEdgeStart: boolean;
+  isHoverEdgeEnd: boolean;
+  isHoverEdgeStartNearRange: boolean;
+  isHoverEdgeEndNearRange: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+};
+
+export type ModifyCellClassNamesT<DateType> = {
+  modifyCellClassNames?: (
+    classNames: Record<string, any>,
+    options: MainProps<DateType> & {
+      currentDate: DateType;
+      statuses: CellStatuses;
+    },
+  ) => Record<string, any>;
+};
 
 export default function useCellClassName<DateType>({
   cellPrefixCls,
@@ -13,20 +52,13 @@ export default function useCellClassName<DateType>({
   offsetCell,
   today,
   value,
+  modifyCellClassNames,
 }: {
-  cellPrefixCls: string;
-  generateConfig: GenerateConfig<DateType>;
-  isSameCell: (
-    current: NullableDateType<DateType>,
-    target: NullableDateType<DateType>,
-  ) => boolean;
+  isSameCell: (current: NullableDateType<DateType>, target: NullableDateType<DateType>) => boolean;
   offsetCell: (date: DateType, offset: number) => DateType;
   isInView: (date: DateType) => boolean;
-  rangedValue?: RangeValue<DateType>;
-  hoverRangedValue?: RangeValue<DateType>;
-  today?: NullableDateType<DateType>;
-  value?: NullableDateType<DateType>;
-}) {
+} & MainProps<DateType> &
+  ModifyCellClassNamesT<DateType>) {
   function getClassName(currentDate: DateType) {
     const prevDate = offsetCell(currentDate, -1);
     const nextDate = offsetCell(currentDate, 1);
@@ -37,12 +69,7 @@ export default function useCellClassName<DateType>({
     const hoverStart = getValue(hoverRangedValue, 0);
     const hoverEnd = getValue(hoverRangedValue, 1);
 
-    const isRangeHovered = isInRange(
-      generateConfig,
-      hoverStart,
-      hoverEnd,
-      currentDate,
-    );
+    const isRangeHovered = isInRange(generateConfig, hoverStart, hoverEnd, currentDate);
 
     function isRangeStart(date: DateType) {
       return isSameCell(rangeStart, date);
@@ -54,55 +81,77 @@ export default function useCellClassName<DateType>({
     const isHoverEnd = isSameCell(hoverEnd, currentDate);
 
     const isHoverEdgeStart =
-      (isRangeHovered || isHoverEnd) &&
-      (!isInView(prevDate) || isRangeEnd(prevDate));
+      (isRangeHovered || isHoverEnd) && (!isInView(prevDate) || isRangeEnd(prevDate));
     const isHoverEdgeEnd =
-      (isRangeHovered || isHoverStart) &&
-      (!isInView(nextDate) || isRangeStart(nextDate));
+      (isRangeHovered || isHoverStart) && (!isInView(nextDate) || isRangeStart(nextDate));
 
-    return {
-      // In view
-      [`${cellPrefixCls}-in-view`]: isInView(currentDate),
-
-      // Range
-      [`${cellPrefixCls}-in-range`]: isInRange<DateType>(
-        generateConfig,
-        rangeStart,
-        rangeEnd,
-        currentDate,
-      ),
-      [`${cellPrefixCls}-range-start`]: isRangeStart(currentDate),
-      [`${cellPrefixCls}-range-end`]: isRangeEnd(currentDate),
-      [`${cellPrefixCls}-range-start-single`]:
-        isRangeStart(currentDate) && !rangeEnd,
-      [`${cellPrefixCls}-range-end-single`]:
-        isRangeEnd(currentDate) && !rangeStart,
-      [`${cellPrefixCls}-range-start-near-hover`]:
+    const statuses = {
+      isInView: isInView(currentDate),
+      isInRange: isInRange<DateType>(generateConfig, rangeStart, rangeEnd, currentDate),
+      isRangeStart: isRangeStart(currentDate),
+      isRangeEnd: isRangeEnd(currentDate),
+      isRangeStartSingle: isRangeStart(currentDate) && !rangeEnd,
+      isRangeEndSingle: isRangeEnd(currentDate) && !rangeStart,
+      isRangeStartNearHover:
         isRangeStart(currentDate) &&
         (isSameCell(prevDate, hoverStart) ||
           isInRange(generateConfig, hoverStart, hoverEnd, prevDate)),
-      [`${cellPrefixCls}-range-end-near-hover`]:
+      isRangeEndNearHover:
         isRangeEnd(currentDate) &&
         (isSameCell(nextDate, hoverEnd) ||
           isInRange(generateConfig, hoverStart, hoverEnd, nextDate)),
+      isRangeHovered,
+      isHoverStart,
+      isHoverEnd,
+      isHoverEdgeStart,
+      isHoverEdgeEnd,
+      isHoverEdgeStartNearRange: isHoverEdgeStart && isSameCell(prevDate, rangeEnd),
+      isHoverEdgeEndNearRange: isHoverEdgeEnd && isSameCell(nextDate, rangeStart),
+      isToday: isSameCell(today, currentDate),
+      isSelected: isSameCell(value, currentDate),
+    };
+
+    const classNames = {
+      // In view
+      [`${cellPrefixCls}-in-view`]: statuses.isInView,
+
+      // Range
+      [`${cellPrefixCls}-in-range`]: statuses.isInRange,
+      [`${cellPrefixCls}-range-start`]: statuses.isRangeStart,
+      [`${cellPrefixCls}-range-end`]: statuses.isRangeEnd,
+      [`${cellPrefixCls}-range-start-single`]: statuses.isRangeStartSingle,
+      [`${cellPrefixCls}-range-end-single`]: statuses.isRangeEndSingle,
+      [`${cellPrefixCls}-range-start-near-hover`]: statuses.isRangeStartNearHover,
+      [`${cellPrefixCls}-range-end-near-hover`]: statuses.isRangeEndNearHover,
 
       // Range Hover
-      [`${cellPrefixCls}-range-hover`]: isRangeHovered,
-      [`${cellPrefixCls}-range-hover-start`]: isHoverStart,
-      [`${cellPrefixCls}-range-hover-end`]: isHoverEnd,
+      [`${cellPrefixCls}-range-hover`]: statuses.isRangeHovered,
+      [`${cellPrefixCls}-range-hover-start`]: statuses.isHoverStart,
+      [`${cellPrefixCls}-range-hover-end`]: statuses.isHoverEnd,
 
       // Range Edge
-      [`${cellPrefixCls}-range-hover-edge-start`]: isHoverEdgeStart,
-      [`${cellPrefixCls}-range-hover-edge-end`]: isHoverEdgeEnd,
-      [`${cellPrefixCls}-range-hover-edge-start-near-range`]:
-        isHoverEdgeStart && isSameCell(prevDate, rangeEnd),
-      [`${cellPrefixCls}-range-hover-edge-end-near-range`]:
-        isHoverEdgeEnd && isSameCell(nextDate, rangeStart),
+      [`${cellPrefixCls}-range-hover-edge-start`]: statuses.isHoverEdgeStart,
+      [`${cellPrefixCls}-range-hover-edge-end`]: statuses.isHoverEdgeEnd,
+      [`${cellPrefixCls}-range-hover-edge-start-near-range`]: statuses.isHoverEdgeStartNearRange,
+      [`${cellPrefixCls}-range-hover-edge-end-near-range`]: statuses.isHoverEdgeEndNearRange,
 
       // Others
-      [`${cellPrefixCls}-today`]: isSameCell(today, currentDate),
-      [`${cellPrefixCls}-selected`]: isSameCell(value, currentDate),
+      [`${cellPrefixCls}-today`]: statuses.isToday,
+      [`${cellPrefixCls}-selected`]: statuses.isSelected,
     };
+
+    return typeof modifyCellClassNames === 'function'
+      ? modifyCellClassNames(classNames, {
+          cellPrefixCls,
+          generateConfig,
+          rangedValue,
+          hoverRangedValue,
+          today,
+          value,
+          currentDate,
+          statuses,
+        })
+      : classNames;
   }
 
   return getClassName;

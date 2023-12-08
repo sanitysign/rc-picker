@@ -3,6 +3,7 @@ import type { GenerateConfig } from '../../generate';
 import { YEAR_DECADE_COUNT } from './constant';
 import type { CellRender, Locale, NullableDateType } from '../../interface';
 import useCellClassName from '../../hooks/useCellClassName';
+import type { ModifyCellClassNamesT } from '../../hooks/useCellClassName';
 import { formatValue, isSameYear } from '../../utils/dateUtil';
 import RangeContext from '../../RangeContext';
 import PanelBody from '../PanelBody';
@@ -19,10 +20,10 @@ export type YearBodyProps<DateType> = {
   disabledDate?: (date: DateType) => boolean;
   onSelect: (value: DateType) => void;
   cellRender?: CellRender<DateType>;
-};
+} & ModifyCellClassNamesT<DateType>;
 
 function YearBody<DateType>(props: YearBodyProps<DateType>) {
-  const { prefixCls, value, viewDate, locale, generateConfig, cellRender } = props;
+  const { prefixCls, value, viewDate, locale, generateConfig, cellRender, modifyCellClassNames } = props;
   const { rangedValue, hoverRangedValue } = React.useContext(RangeContext);
 
   const yearPrefixCls = `${prefixCls}-cell`;
@@ -51,6 +52,7 @@ function YearBody<DateType>(props: YearBodyProps<DateType>) {
     isSameCell: (current, target) => isSameYear(generateConfig, current, target),
     isInView,
     offsetCell: (date, offset) => generateConfig.addYear(date, offset),
+    modifyCellClassNames,
   });
 
 

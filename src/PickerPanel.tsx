@@ -11,6 +11,7 @@ import KeyCode from 'rc-util/lib/KeyCode';
 import warning from 'rc-util/lib/warning';
 import * as React from 'react';
 import type { GenerateConfig } from './generate';
+import type { ModifyCellClassNamesT } from './hooks/useCellClassName';
 import { useCellRender } from './hooks/useCellRender';
 import type {
   CellRender,
@@ -94,7 +95,11 @@ export type PickerPanelSharedProps<DateType> = {
   showAllNavButtons?: boolean;
   vertical?: boolean;
   okBtn?: boolean;
-};
+  innerInput?: JSX.Element;
+  toolbar?: JSX.Element;
+  header?: JSX.Element;
+  panelTop?: JSX.Element;
+} & ModifyCellClassNamesT<DateType>;
 
 export type PickerPanelBaseProps<DateType> = {
   picker: Exclude<PickerMode, 'date' | 'time'>;
@@ -171,9 +176,14 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     showAllNavButtons,
     vertical,
     okBtn,
+    innerInput,
+    toolbar,
+    header,
+    panelTop,
+    modifyCellClassNames,
   } = props as MergedPickerPanelProps<DateType>;
 
-  const withTime = (picker === 'date' && !!showTime) || picker === 'time'
+  const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
 
   const isHourStepValid = 24 % hourStep === 0;
@@ -440,6 +450,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     sourceMode,
     onPanelChange: onInternalPanelChange,
     disabledDate,
+    modifyCellClassNames,
   };
   delete pickerProps.onChange;
   delete pickerProps.onSelect;
@@ -640,7 +651,18 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
         onBlur={onInternalBlur}
         onMouseDown={onMouseDown}
       >
-        {panelNode}
+        {header}
+
+        <div className={`${prefixCls}-panel-top`}>
+          <div className={`${prefixCls}-panel-main`}>
+            {panelTop}
+            {innerInput}
+            {panelNode}
+          </div>
+
+          {toolbar}
+        </div>
+
         {extraFooter || rangesNode || todayNode ? (
           <div className={`${prefixCls}-footer`}>
             {extraFooter}

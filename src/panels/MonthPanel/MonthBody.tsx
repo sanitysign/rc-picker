@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { GenerateConfig } from '../../generate';
 import useCellClassName from '../../hooks/useCellClassName';
+import type { ModifyCellClassNamesT } from '../../hooks/useCellClassName';
 import type { CellRender, Locale } from '../../interface';
 import RangeContext from '../../RangeContext';
 import { formatValue, isSameMonth } from '../../utils/dateUtil';
@@ -20,10 +21,10 @@ export type MonthBodyProps<DateType> = {
   disabledDate?: (date: DateType) => boolean;
   cellRender?: CellRender<DateType>;
   onSelect: (value: DateType) => void;
-};
+} & ModifyCellClassNamesT<DateType>;
 
 function MonthBody<DateType>(props: MonthBodyProps<DateType>) {
-  const { prefixCls, locale, value, viewDate, generateConfig, cellRender } = props;
+  const { prefixCls, locale, value, viewDate, generateConfig, cellRender, modifyCellClassNames } = props;
 
   const { rangedValue, hoverRangedValue } = React.useContext(RangeContext);
 
@@ -38,6 +39,7 @@ function MonthBody<DateType>(props: MonthBodyProps<DateType>) {
     isSameCell: (current, target) => isSameMonth(generateConfig, current, target),
     isInView: () => true,
     offsetCell: (date, offset) => generateConfig.addMonth(date, offset),
+    modifyCellClassNames,
   });
 
   const monthsLocale: string[] =

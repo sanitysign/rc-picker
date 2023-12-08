@@ -4,8 +4,9 @@ import Picker from '../../src';
 import PickerPanel from '../../src/PickerPanel';
 import momentGenerateConfig from '../../src/generate/moment';
 import zhCN from '../../src/locale/zh_CN';
+import enGb from '../../src/locale/en_GB';
 import '../../assets/index.scss';
-import './slide.less';
+import './slide.scss';
 
 interface DateRangeState {
   startValue: Moment | null;
@@ -138,7 +139,7 @@ class Customize extends React.Component<{}, DateRangeState> {
             <h3>custom icon</h3>
             <Picker
               generateConfig={momentGenerateConfig}
-              locale={zhCN}
+              locale={enGb}
               getPopupContainer={this.getPopupContainer}
               // format="YYYY/MM/DD"
               format={['YYYY-MM-DD', 'YYYY/MM/DD']}
@@ -159,7 +160,7 @@ class Customize extends React.Component<{}, DateRangeState> {
             <h3>renderExtraFooter</h3>
             <PickerPanel
               generateConfig={momentGenerateConfig}
-              locale={zhCN}
+              locale={enGb}
               showToday
               disabledDate={disabledDate}
               onSelect={this.handleSelect}
@@ -174,7 +175,7 @@ class Customize extends React.Component<{}, DateRangeState> {
             <h3>month picker</h3>
             <PickerPanel
               generateConfig={momentGenerateConfig}
-              locale={zhCN}
+              locale={enGb}
               picker="month"
               defaultValue={now}
               onSelect={this.handleSelectMonth}
@@ -185,7 +186,7 @@ class Customize extends React.Component<{}, DateRangeState> {
             <h3>monthCellRender</h3>
             <PickerPanel
               generateConfig={momentGenerateConfig}
-              locale={zhCN}
+              locale={enGb}
               picker="month"
               monthCellRender={this.monthCellRender}
             />
@@ -193,7 +194,7 @@ class Customize extends React.Component<{}, DateRangeState> {
         </div>
         <Picker
           generateConfig={momentGenerateConfig}
-          locale={zhCN}
+          locale={enGb}
           defaultValue={now}
           disabledDate={this.disabledStartDate}
           showTime
@@ -207,7 +208,7 @@ class Customize extends React.Component<{}, DateRangeState> {
         <Picker
           generateConfig={momentGenerateConfig}
           disabledDate={this.disabledEndDate}
-          locale={zhCN}
+          locale={enGb}
           showTime
           format="YYYY-MM-DD HH:mm:ss"
           value={endValue}

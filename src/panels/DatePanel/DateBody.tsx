@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { GenerateConfig } from '../../generate';
+import type { ModifyCellClassNamesT } from '../../hooks/useCellClassName';
 import useCellClassName from '../../hooks/useCellClassName';
 import type { CellRender, Locale } from '../../interface';
 import RangeContext from '../../RangeContext';
@@ -22,7 +23,7 @@ export type DateBodyPassProps<DateType> = {
   prefixColumn?: (date: DateType) => React.ReactNode;
   rowClassName?: (date: DateType) => string;
   isSameCell?: (current: DateType, target: DateType) => boolean;
-};
+} & ModifyCellClassNamesT<DateType>;
 
 export type DateBodyProps<DateType> = {
   prefixCls: string;
@@ -45,6 +46,7 @@ function DateBody<DateType>(props: DateBodyProps<DateType>) {
     value,
     cellRender,
     isSameCell,
+    modifyCellClassNames,
   } = props;
 
   const { rangedValue, hoverRangedValue } = React.useContext(RangeContext);
@@ -80,6 +82,7 @@ function DateBody<DateType>(props: DateBodyProps<DateType>) {
     isSameCell: isSameCell || ((current, target) => isSameDate(generateConfig, current, target)),
     isInView: (date) => isSameMonth(generateConfig, date, viewDate),
     offsetCell: (date, offset) => generateConfig.addDate(date, offset),
+    modifyCellClassNames,
   });
 
   const getCellNode = cellRender
@@ -88,7 +91,7 @@ function DateBody<DateType>(props: DateBodyProps<DateType>) {
           originNode: wrapperNode,
           today,
           type: 'date',
-          locale
+          locale,
         })
     : undefined;
 

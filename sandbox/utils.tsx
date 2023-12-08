@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
 import type { EventValue, RangeValue, PresetDate } from '../src/interface';
+import type { Dayjs } from "dayjs";
+import type { PresetComponentSingle } from '../src/Picker';
+import type { PresetComponentRange } from '../src//RangePicker';
 
-export const singlePresets: PresetDate<EventValue<dayjs.Dayjs>>[] = [
+export const singlePresets: PresetDate<EventValue<Dayjs>>[] = [
   {
     label: 'Now',
     value: () => dayjs(),
@@ -36,7 +39,7 @@ export const singlePresets: PresetDate<EventValue<dayjs.Dayjs>>[] = [
   },
 ];
 
-export const rangePresets: PresetDate<RangeValue<dayjs.Dayjs>>[] = [
+export const rangePresets: PresetDate<RangeValue<Dayjs>>[] = [
   {
     label: 'Yesterday',
     value: () => {
@@ -96,3 +99,53 @@ export const rangePresets: PresetDate<RangeValue<dayjs.Dayjs>>[] = [
     },
   },
 ];
+
+export const PresetsSingle: PresetComponentSingle<Dayjs> = ({
+  getClassNames,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+}) => {
+  return (
+    <ul>
+      {singlePresets.map(({ label, value }, index) => {
+        return (
+          <li
+            className={getClassNames(value)}
+            key={index}
+            onClick={() => onClick(value)}
+            onMouseEnter={() => onMouseEnter(value)}
+            onMouseLeave={() => onMouseLeave()}
+          >
+            {label}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+export const PresetsRange: PresetComponentRange<Dayjs> = ({
+  getClassNames,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+}) => {
+  return (
+    <ul>
+      {rangePresets.map(({ label, value }, index) => {
+        return (
+          <li
+            className={getClassNames(value)}
+            key={index}
+            onClick={() => onClick(value)}
+            onMouseEnter={() => onMouseEnter(value)}
+            onMouseLeave={() => onMouseLeave()}
+          >
+            {label}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};

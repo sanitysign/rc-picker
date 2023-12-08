@@ -10,7 +10,15 @@ export interface PresetPanelProps<T, DateType> {
   onHover?: (value: T) => void;
   generateConfig: GenerateConfig<DateType>;
   prevValue: T;
+  PresetComponent?: PresetComponentT<T>;
 }
+
+export type PresetComponentT<T> = (props: {
+  getClassNames: (value: T) => string;
+  onClick: (value: T) => void;
+  onMouseEnter: (value: T) => void;
+  onMouseLeave: () => void;
+}) => JSX.Element;
 
 const isEqualDateTime = <T, DateType>(generateConfig: GenerateConfig<DateType>, a: T, b: T) => {
   if (a === b) return { date: true, time: true };
@@ -36,36 +44,58 @@ const isEqualDateTime = <T, DateType>(generateConfig: GenerateConfig<DateType>, 
 };
 
 export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, DateType>) {
-  const { prefixCls, presets, onClick, onHover, generateConfig, prevValue } = props;
+  const { prefixCls, presets, onClick, onHover, generateConfig, prevValue, PresetComponent } =
+    props;
 
-  if (!presets.length) {
+  if (!presets.length && !PresetComponent) {
     return null;
   }
 
+  const getClassNames = (value: T) => {
+    const val = executeValue(value);
+    const equal = isEqualDateTime<T, DateType>(generateConfig, prevValue, val);
+
+    let cn = '';
+    if (equal.date) cn += 'is-active-date';
+    if (equal.time) cn += ' is-active-time';
+
+    return cn.trim();
+  };
+
+  const onItemClick = (value: T) => onClick?.(executeValue(value));
+
+  const onMouseEnter = (value: T) => onHover?.(executeValue(value));
+
+  const onMouseLeave = () => onHover?.(null);
+
   return (
     <div className={`${prefixCls}-presets`}>
-      <ul>
-        {presets.map(({ label, value }, index) => {
-          const val = executeValue(value);
-          const equal = isEqualDateTime<T, DateType>(generateConfig, prevValue, val);
+      {!!presets.length && (
+        <ul>
+          {presets.map(({ label, value }, index) => {
+            return (
+              <li
+                className={getClassNames(value as T)}
+                key={index}
+                onClick={() => onItemClick(value as T)}
+                onMouseEnter={() => onMouseEnter(value as T)}
+                onMouseLeave={() => onMouseLeave()}
+              >
+                {label}
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
-          let cn = '';
-          if (equal.date) cn += 'is-active-date';
-          if (equal.time) cn += ' is-active-time';
-
-          return (
-            <li
-              className={cn.trim()}
-              key={index}
-              onClick={() => onClick?.(executeValue(value))}
-              onMouseEnter={() => onHover?.(executeValue(value))}
-              onMouseLeave={() => onHover?.(null)}
-            >
-              {label}
-            </li>
-          );
-        })}
-      </ul>
+      {!!PresetComponent && (
+        <PresetComponent
+          getClassNames={getClassNames}
+          onClick={onItemClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        />
+      )}
     </div>
   );
 }
