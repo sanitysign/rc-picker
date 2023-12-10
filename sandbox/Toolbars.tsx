@@ -6,7 +6,9 @@ import { RangePicker } from '../src';
 import dayjsGenerateConfig from '../src/generate/dayjs';
 import CalendarLocaleRu from '../src/locale/ru_RU';
 import CalendarLocaleEn from '../src/locale/en_US';
-import { singlePresets, rangePresets, PresetsSingle, PresetsRange } from './utils';
+import { singlePresets, rangePresets, renderPresetsSingle, renderPresetsRange } from './utils';
+import type { RenderPresetsRangeProps } from '../src/RangePicker';
+import type { Dayjs } from "dayjs";
 
 import type { PickerRefConfig } from '../src/Picker';
 
@@ -36,6 +38,8 @@ const Toolbars = () => {
   const refToolbar = useRef<HTMLDivElement>();
   const refToolbarRange = useRef<HTMLDivElement>();
 
+  const innerPresetsRef = useRef<RenderPresetsRangeProps<Dayjs>>()
+
   const [date, setDate] = useState(null);
   const [dateRange, setDateRange] = useState(null);
 
@@ -56,7 +60,7 @@ const Toolbars = () => {
         // showInnerInput={true}
         // onOpenChange={(open) => setOpen(open)}
         // toolbar={<div className="toolbar" ref={refToolbar}></div>}
-        PresetComponent={PresetsSingle}
+        renderPresets={renderPresetsSingle}
       />
 
       {/* <Picker
@@ -91,19 +95,20 @@ const Toolbars = () => {
         toolbar={<div className="toolbar" ref={refToolbarRange}></div>}
         // doublePanel={false}
         // showInput={false}
-        // onOpenChange={(open) => setOpenRange(open)}
+        onOpenChange={(open) => setOpenRange(open)}
         // rangePanelTop={<h2>Top</h2>}
-        PresetComponent={PresetsRange}
+        // renderPresets={(props) => renderPresetsRange(props, innerPresetsRef)}
+        renderPresets={renderPresetsRange}
       />
 
-      {/* <RangePicker
+      <RangePicker
         {...props}
         value={dateRange}
         onChange={(val) => setDateRange(val)}
         ref={refRangeInner as any}
         showInnerInput={true}
         getPopupContainer={() => refToolbarRange.current}
-        doublePanel={false}
+        // doublePanel={false}
         showInput={false}
         open={openRange}
         isClickInsidePicker={(target) =>
@@ -112,8 +117,12 @@ const Toolbars = () => {
             (target as HTMLElement).closest('.rc-picker-dropdown')
           )
         }
-        rangePanelTop={<h2>Top</h2>}
-      /> */}
+        // rangePanelTop={<h2>Top</h2>}
+        // renderPresets={props => {
+        //   innerPresetsRef.current = props
+        //   return null
+        // }}
+      />
     </>
   );
 };

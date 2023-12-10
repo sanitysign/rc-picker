@@ -10,15 +10,17 @@ export interface PresetPanelProps<T, DateType> {
   onHover?: (value: T) => void;
   generateConfig: GenerateConfig<DateType>;
   prevValue: T;
-  PresetComponent?: PresetComponentT<T>;
+  renderPresets?: RenderPresets<T>;
 }
 
-export type PresetComponentT<T> = (props: {
+export type RenderPresetsProps<T> = {
   getClassNames: (value: T) => string;
   onClick: (value: T) => void;
   onMouseEnter: (value: T) => void;
   onMouseLeave: () => void;
-}) => JSX.Element;
+};
+
+export type RenderPresets<T> = (props: RenderPresetsProps<T>) => JSX.Element;
 
 const isEqualDateTime = <T, DateType>(generateConfig: GenerateConfig<DateType>, a: T, b: T) => {
   if (a === b) return { date: true, time: true };
@@ -44,12 +46,9 @@ const isEqualDateTime = <T, DateType>(generateConfig: GenerateConfig<DateType>, 
 };
 
 export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, DateType>) {
-  const { prefixCls, presets, onClick, onHover, generateConfig, prevValue, PresetComponent } =
-    props;
+  const { prefixCls, presets, onClick, onHover, generateConfig, prevValue, renderPresets } = props;
 
-  if (!presets.length && !PresetComponent) {
-    return null;
-  }
+  if (!presets.length && !renderPresets) return null;
 
   const getClassNames = (value: T) => {
     const val = executeValue(value);
@@ -67,6 +66,18 @@ export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, Date
   const onMouseEnter = (value: T) => onHover?.(executeValue(value));
 
   const onMouseLeave = () => onHover?.(null);
+
+  const elem =
+    typeof renderPresets === 'function'
+      ? renderPresets({
+          getClassNames,
+          onClick: onItemClick,
+          onMouseEnter,
+          onMouseLeave,
+        })
+      : null;
+
+  if (!presets.length && !elem) return null;
 
   return (
     <div className={`${prefixCls}-presets`}>
@@ -88,14 +99,7 @@ export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, Date
         </ul>
       )}
 
-      {!!PresetComponent && (
-        <PresetComponent
-          getClassNames={getClassNames}
-          onClick={onItemClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-        />
-      )}
+      {elem}
     </div>
   );
 }

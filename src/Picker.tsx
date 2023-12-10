@@ -34,7 +34,7 @@ import type {
 } from './PickerPanel';
 import PickerPanel from './PickerPanel';
 import PickerTrigger from './PickerTrigger';
-import type { PresetComponentT } from './PresetPanel';
+import type { RenderPresets, RenderPresetsProps } from './PresetPanel';
 import PresetPanel from './PresetPanel';
 import { formatValue, isEqual, parseValue } from './utils/dateUtil';
 import { getClearIcon } from './utils/getClearIcon';
@@ -129,7 +129,7 @@ export type PickerSharedProps<DateType> = {
   header?: JSX.Element;
   panelTop?: JSX.Element;
   isClickInsidePicker?: (target: EventTarget) => boolean;
-  PresetComponent?: PresetComponentT<PresetDate<DateType>['value']>;
+  renderPresets?: RenderPresets<PresetDate<DateType>['value']>;
 } & ModifyCellClassNamesT<DateType> &
   React.AriaAttributes;
 
@@ -138,7 +138,7 @@ type OmitPanelProps<Props> = Omit<
   'onChange' | 'hideHeader' | 'pickerValue' | 'onPickerValueChange'
 >;
 
-export type PresetComponentSingle<DateType> = PickerSharedProps<DateType>['PresetComponent'];
+export type RenderPresetsSingleProps<DateType> = RenderPresetsProps<PresetDate<DateType>['value']>
 
 export type PickerBaseProps<DateType> = {} & PickerSharedProps<DateType> &
   OmitPanelProps<PickerPanelBaseProps<DateType>>;
@@ -233,7 +233,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     header,
     panelTop,
     isClickInsidePicker,
-    PresetComponent,
+    renderPresets,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -482,7 +482,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         }}
         generateConfig={generateConfig}
         prevValue={selectedValue}
-        PresetComponent={PresetComponent}
+        renderPresets={renderPresets}
       />
       <div className={`${prefixCls}-panels-outer-wrap`}>
         <PickerPanel<DateType>

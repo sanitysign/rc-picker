@@ -33,8 +33,8 @@ import type { SharedTimeProps } from './panels/TimePanel';
 import type { PickerBaseProps, PickerDateProps, PickerRefConfig, PickerTimeProps } from './Picker';
 import PickerPanel from './PickerPanel';
 import PickerTrigger from './PickerTrigger';
+import type { RenderPresets, RenderPresetsProps } from './PresetPanel';
 import PresetPanel from './PresetPanel';
-import type { PresetComponentT } from './PresetPanel';
 import RangeContext from './RangeContext';
 import {
   formatValue,
@@ -153,7 +153,7 @@ export type RangePickerSharedProps<DateType> = {
   doublePanel?: boolean;
   rangeHeader?: JSX.Element;
   rangePanelTop?: JSX.Element;
-  PresetComponent?: PresetComponentT<PresetDate<Exclude<RangeValue<DateType>, null>>["value"]>
+  renderPresets?: RenderPresets<PresetDate<Exclude<RangeValue<DateType>, null>>['value']>;
 };
 
 type OmitPickerProps<Props> = Omit<
@@ -175,14 +175,16 @@ type OmitPickerProps<Props> = Omit<
   | 'onOk'
   | 'cellRender'
   | 'presets'
-  | 'PresetComponent'
+  | 'renderPresets'
 >;
 
 type RangeShowTimeObject<DateType> = Omit<SharedTimeProps<DateType>, 'defaultValue'> & {
   defaultValue?: DateType[];
 };
 
-export type PresetComponentRange<DateType> = RangePickerSharedProps<DateType>["PresetComponent"]
+export type RenderPresetsRangeProps<DateType> = RenderPresetsProps<
+  PresetDate<Exclude<RangeValue<DateType>, null>>['value']
+>;
 
 export type RangePickerBaseProps<DateType> = {} & RangePickerSharedProps<DateType> &
   OmitPickerProps<PickerBaseProps<DateType>>;
@@ -291,7 +293,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     rangeHeader,
     rangePanelTop,
     isClickInsidePicker,
-    PresetComponent,
+    renderPresets,
   } = props as MergedRangePickerProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -1042,7 +1044,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           }}
           generateConfig={generateConfig}
           prevValue={selectedValue}
-          PresetComponent={PresetComponent}
+          renderPresets={renderPresets}
         />
         <div className={`${prefixCls}-panels-wrap`}>
           {rangeHeader}
