@@ -138,7 +138,7 @@ type OmitPanelProps<Props> = Omit<
   'onChange' | 'hideHeader' | 'pickerValue' | 'onPickerValueChange'
 >;
 
-export type RenderPresetsSingleProps<DateType> = RenderPresetsProps<PresetDate<DateType>['value']>
+export type RenderPresetsSingleProps<DateType> = RenderPresetsProps<PresetDate<DateType>['value']>;
 
 export type PickerBaseProps<DateType> = {} & PickerSharedProps<DateType> &
   OmitPanelProps<PickerPanelBaseProps<DateType>>;
@@ -276,15 +276,19 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     defaultValue: defaultOpen,
     postState: (postOpen) => (disabled ? false : postOpen),
     onChange: (newOpen) => {
-      if (onOpenChange) {
-        onOpenChange(newOpen);
-      }
-
       if (!newOpen && operationRef.current && operationRef.current.onClose) {
         operationRef.current.onClose();
       }
     },
   });
+
+  const prevOpenRef = React.useRef(mergedOpen);
+
+  React.useEffect(() => {
+    if (mergedOpen === prevOpenRef.current) return
+    onOpenChange?.(mergedOpen);
+    prevOpenRef.current = mergedOpen;
+  }, [mergedOpen, onOpenChange])
 
   // ============================= Text ==============================
   const [valueTexts, firstValueText] = useValueTexts(selectedValue, {

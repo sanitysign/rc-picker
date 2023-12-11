@@ -50,10 +50,15 @@ export default function useRangeOpen(
 
   const [mergedOpen, setMergedOpen] = useMergedState(defaultOpen || false, {
     value: open,
-    onChange: (nextOpen) => {
-      onOpenChange?.(nextOpen);
-    },
   });
+
+  const prevOpenRef = React.useRef(mergedOpen);
+
+  React.useEffect(() => {
+    if (mergedOpen === prevOpenRef.current) return
+    onOpenChange?.(mergedOpen);
+    prevOpenRef.current = mergedOpen;
+  }, [mergedOpen, onOpenChange])
 
   const [mergedActivePickerIndex, setMergedActivePickerIndex] = useMergedState<0 | 1>(0, {
     value: activePickerIndex,
