@@ -53,6 +53,7 @@ const Toolbars = () => {
         placeholder="Select date"
         // presets={singlePresets}
         okBtn
+        cancelBtn
         value={date}
         onChange={(val) => setDate(val)}
         ref={ref as any}
@@ -99,6 +100,7 @@ const Toolbars = () => {
         // rangePanelTop={<h2>Top</h2>}
         // renderPresets={(props) => renderPresetsRange(props, innerPresetsRef)}
         renderPresets={renderPresetsRange}
+        cancelBtn
       />
 
       <RangePicker

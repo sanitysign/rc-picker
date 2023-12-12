@@ -95,6 +95,8 @@ export type PickerPanelSharedProps<DateType> = {
   showAllNavButtons?: boolean;
   vertical?: boolean;
   okBtn?: boolean;
+  cancelBtn?: boolean;
+  cancelBtnText?: React.ReactNode;
   innerInput?: JSX.Element;
   toolbar?: JSX.Element;
   header?: JSX.Element;
@@ -104,6 +106,7 @@ export type PickerPanelSharedProps<DateType> = {
 export type PickerPanelBaseProps<DateType> = {
   picker: Exclude<PickerMode, 'date' | 'time'>;
   cellRender?: CellRender<DateType>;
+  onCancel: () => void
 } & PickerPanelSharedProps<DateType>;
 
 export type PickerPanelDateProps<DateType> = {
@@ -176,6 +179,9 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     showAllNavButtons,
     vertical,
     okBtn,
+    cancelBtn,
+    cancelBtnText,
+    onCancel,
     innerInput,
     toolbar,
     header,
@@ -185,6 +191,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
+  const needCancelButton: boolean = cancelBtn;
 
   const isHourStepValid = 24 % hourStep === 0;
   const isMinuteStepValid = 60 % minuteStep === 0;
@@ -590,6 +597,8 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
         prefixCls,
         components,
         needConfirmButton,
+        needCancelButton,
+        cancelBtnText,
         okDisabled: !mergedValue || (disabledDate && disabledDate(mergedValue)),
         locale,
         showNow,
@@ -602,6 +611,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
             }
           }
         },
+        onCancel,
       });
     }
   }

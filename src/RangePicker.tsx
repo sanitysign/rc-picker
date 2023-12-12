@@ -120,6 +120,7 @@ export type RangePickerSharedProps<DateType> = {
     Exclude<RangeValue<DateType>, null> | (() => Exclude<RangeValue<DateType>, null>)
   >;
   separator?: React.ReactNode;
+  innerSeparator?: React.ReactNode;
   allowEmpty?: [boolean, boolean];
   mode?: [PanelMode, PanelMode];
   onChange?: (values: RangeValue<DateType>, formatString: [string, string]) => void;
@@ -241,6 +242,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     showTime,
     use12Hours,
     separator = <RangeSeparator prefixCls={prefixCls} />,
+    innerSeparator,
     value,
     defaultValue,
     defaultPickerValue,
@@ -283,6 +285,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     changeOnBlur,
     vertical,
     okBtn,
+    cancelBtn,
+    cancelBtnText,
     preventOnBlurWhileOpen = true,
     openOnFocus = true,
     doublePanel = true,
@@ -298,6 +302,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
+  const needCancelButton: boolean = cancelBtn;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelDivRef = useRef<HTMLDivElement>(null);
@@ -911,6 +916,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           onOk={null}
           onSelect={undefined}
           onChange={undefined}
+          toolbar={undefined}
           defaultValue={
             mergedActivePickerIndex === 0 ? getValue(selectedValue, 1) : getValue(selectedValue, 0)
           }
@@ -966,6 +972,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       prefixCls,
       components,
       needConfirmButton,
+      needCancelButton,
+      cancelBtnText,
       okDisabled:
         !getValue(selectedValue, mergedActivePickerIndex) ||
         (disabledDate && disabledDate(selectedValue[mergedActivePickerIndex])),
@@ -980,6 +988,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           // Switch
           triggerOpen(false, mergedActivePickerIndex, 'confirm');
         }
+      },
+      onCancel: () => {
+        triggerOpen(false, getValue(selectedValue, 0) ? 0 : false, 'blur');
+        triggerOpen(false, getValue(selectedValue, 1) ? 1 : false, 'blur');
       },
     });
 
@@ -1238,6 +1250,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       autoComplete: autoComplete,
     };
 
+    const currentSeparator = innerSeparator !== undefined ? innerSeparator : separator;
+
     return (
       <div
         className={classNames(prefixCls, `${prefixCls}-inner`, `${prefixCls}-range`, className, {
@@ -1267,10 +1281,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           )}
         </div>
         <div className={`${prefixCls}-range-separator`} ref={separatorRefInner}>
-          {separator}
+          {currentSeparator}
         </div>
         <div
-          className={classNames(`${prefixCls}-input`, {
+          className={classNames(`${prefixCls}-input`, `${prefixCls}-inner-input`, {
             [`${prefixCls}-input-active`]: mergedActivePickerIndex === 1,
             [`${prefixCls}-input-placeholder`]: !!endHoverValue,
           })}

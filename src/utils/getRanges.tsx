@@ -6,30 +6,42 @@ export type RangesProps = {
   rangeList?: RangeList;
   components?: Components;
   needConfirmButton: boolean;
+  cancelBtnText?: React.ReactNode;
   onNow?: null | (() => void) | false;
   onOk?: null | (() => void) | false;
   okDisabled?: boolean;
   showNow?: boolean;
   locale: Locale;
-};
+} & (
+  | {
+      needCancelButton: true;
+      onCancel: () => void;
+    }
+  | {
+      needCancelButton: false;
+      onCancel?: () => void;
+    }
+);
 
 export default function getRanges({
   prefixCls,
   // rangeList = [],
   components = {},
   needConfirmButton,
+  needCancelButton,
+  cancelBtnText,
   onNow,
   onOk,
+  onCancel,
   okDisabled,
   showNow,
   locale,
 }: RangesProps) {
   let presetNode: React.ReactNode;
   let okNode: React.ReactNode;
+  const Button = (components.button || 'button') as any;
 
   if (needConfirmButton) {
-    const Button = (components.button || 'button') as any;
-
     if (onNow && showNow !== false) {
       presetNode = (
         <li className={`${prefixCls}-now`}>
@@ -41,7 +53,7 @@ export default function getRanges({
     }
 
     okNode = needConfirmButton && (
-      <li className={`${prefixCls}-ok`}>
+      <li className={`${prefixCls}-btn ${prefixCls}-ok`}>
         <Button disabled={okDisabled} onClick={onOk}>
           {locale.ok}
         </Button>
@@ -57,6 +69,11 @@ export default function getRanges({
     <ul className={`${prefixCls}-ranges`}>
       {presetNode}
       {okNode}
+      {!!needCancelButton && (
+        <li className={`${prefixCls}-btn ${prefixCls}-cancel`}>
+          <Button onClick={onCancel}>{cancelBtnText ?? 'Cancel'}</Button>
+        </li>
+      )}
     </ul>
   );
 }

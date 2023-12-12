@@ -435,13 +435,13 @@
 
   &-footer,
   &-picker-footer {
-    padding: 8px;
+    padding: 4px;
     border-top: 1px solid var(--rc-picker-border-color);
   }
 
   &-ranges {
     margin: 0;
-    padding: 0;
+    padding: 4px;
     overflow: hidden;
     list-style: none;
 
@@ -450,7 +450,7 @@
     }
   }
 
-  &-ok {
+  &-btn {
     float: right;
 
     button {
@@ -463,9 +463,6 @@
       border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
-      color: #fff;
-      background-color: var(--rc-picker-accent-color);
-      box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 
       &:disabled {
         cursor: not-allowed;
@@ -478,6 +475,24 @@
       &:not(:focus-visible) {
         outline: none;
       }
+    }
+  }
+
+  &-ok {
+    button {
+      color: #fff;
+      background-color: var(--rc-picker-accent-color);
+      box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+    }
+  }
+
+  &-cancel {
+    margin-right: 12px;
+
+    button {
+      color: var(--rc-picker-accent-color);
+      background-color: #fff;
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.14);
     }
   }
 

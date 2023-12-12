@@ -135,7 +135,7 @@ export type PickerSharedProps<DateType> = {
 
 type OmitPanelProps<Props> = Omit<
   Props,
-  'onChange' | 'hideHeader' | 'pickerValue' | 'onPickerValueChange'
+  'onChange' | 'hideHeader' | 'pickerValue' | 'onPickerValueChange' | 'onCancel'
 >;
 
 export type RenderPresetsSingleProps<DateType> = RenderPresetsProps<PresetDate<DateType>['value']>;
@@ -507,6 +507,9 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
             const { onPanelChange } = props;
             onLeave(true);
             onPanelChange?.(viewDate, mode);
+          }}
+          onCancel={() => {
+            triggerInnerOpen(false)
           }}
           innerInput={showInnerInput ? getInnerInput() : undefined}
           toolbar={toolbar}
