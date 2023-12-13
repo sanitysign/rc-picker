@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Picker from '../src';
 import { RangePicker } from '../src';
@@ -8,9 +8,11 @@ import CalendarLocaleRu from '../src/locale/ru_RU';
 import CalendarLocaleEn from '../src/locale/en_US';
 import { singlePresets, rangePresets, renderPresetsSingle, renderPresetsRange } from './utils';
 import type { RenderPresetsRangeProps } from '../src/RangePicker';
-import type { Dayjs } from "dayjs";
+import type { Dayjs } from 'dayjs';
 
 import type { PickerRefConfig } from '../src/Picker';
+
+
 
 const props = {
   generateConfig: dayjsGenerateConfig,
@@ -38,7 +40,7 @@ const Toolbars = () => {
   const refToolbar = useRef<HTMLDivElement>();
   const refToolbarRange = useRef<HTMLDivElement>();
 
-  const innerPresetsRef = useRef<RenderPresetsRangeProps<Dayjs>>()
+  const innerPresetsRef = useRef<RenderPresetsRangeProps<Dayjs>>();
 
   const [date, setDate] = useState(null);
   const [dateRange, setDateRange] = useState(null);
@@ -62,6 +64,8 @@ const Toolbars = () => {
         // onOpenChange={(open) => setOpen(open)}
         // toolbar={<div className="toolbar" ref={refToolbar}></div>}
         renderPresets={renderPresetsSingle}
+        closeOnPresetSelect={false}
+
       />
 
       {/* <Picker
@@ -93,7 +97,7 @@ const Toolbars = () => {
         okBtn
         showInnerInput={true}
         // vertical
-        toolbar={<div className="toolbar" ref={refToolbarRange}></div>}
+        // toolbar={<div className="toolbar" ref={refToolbarRange}></div>}
         // doublePanel={false}
         // showInput={false}
         onOpenChange={(open) => setOpenRange(open)}
@@ -101,9 +105,10 @@ const Toolbars = () => {
         // renderPresets={(props) => renderPresetsRange(props, innerPresetsRef)}
         renderPresets={renderPresetsRange}
         cancelBtn
+        closeOnPresetSelect={false}
       />
 
-      <RangePicker
+      {/* <RangePicker
         {...props}
         value={dateRange}
         onChange={(val) => setDateRange(val)}
@@ -124,7 +129,7 @@ const Toolbars = () => {
         //   innerPresetsRef.current = props
         //   return null
         // }}
-      />
+      /> */}
     </>
   );
 };

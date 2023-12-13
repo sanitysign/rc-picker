@@ -126,7 +126,7 @@ export const renderPresetsSingle = ({
 };
 
 export const renderPresetsRange = (
-  { getClassNames, onClick, onMouseEnter, onMouseLeave }: RenderPresetsRangeProps<Dayjs>,
+  { checkEqual, getClassNames, onClick, onMouseEnter, onMouseLeave }: RenderPresetsRangeProps<Dayjs>,
   presetsRef?: {
     current: RenderPresetsRangeProps<Dayjs>;
   },

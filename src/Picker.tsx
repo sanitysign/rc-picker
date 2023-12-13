@@ -125,6 +125,7 @@ export type PickerSharedProps<DateType> = {
   openOnFocus?: boolean;
   showInput?: boolean;
   showInnerInput?: boolean;
+  closeOnPresetSelect?: boolean;
   toolbar?: JSX.Element;
   header?: JSX.Element;
   panelTop?: JSX.Element;
@@ -229,6 +230,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     openOnFocus = true,
     showInput = true,
     showInnerInput = false,
+    closeOnPresetSelect = true,
     toolbar,
     header,
     panelTop,
@@ -482,7 +484,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         presets={presetList}
         onClick={(nextValue) => {
           triggerChange(nextValue);
-          triggerOpen(false);
+          if (closeOnPresetSelect) triggerOpen(false);
         }}
         generateConfig={generateConfig}
         prevValue={selectedValue}

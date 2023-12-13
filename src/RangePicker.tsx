@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { PickerPanelProps } from '.';
 import { RangeSeparator, SuffixIcon } from './components/icons';
 import type { GenerateConfig } from './generate';
+import useCallbackOnceAfterUpdate from './hooks/useCallbackOnceAfterUpdate';
 import { useCellRender } from './hooks/useCellRender';
 import useHoverValue from './hooks/useHoverValue';
 import usePickerInput from './hooks/usePickerInput';
@@ -292,12 +293,14 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     doublePanel = true,
     showInput = true,
     showInnerInput = false,
+    closeOnPresetSelect = true,
     innerInputRender,
     toolbar,
     rangeHeader,
     rangePanelTop,
     isClickInsidePicker,
     renderPresets,
+    renderOkBtn,
   } = props as MergedRangePickerProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -837,6 +840,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const presetList = usePresets(presets, ranges);
 
   // ============================= Panel =============================
+  const onSelectedValueChange = useCallbackOnceAfterUpdate(selectedValue);
+
   function renderPanel(
     panelPosition: 'left' | 'right' | false = false,
     panelProps: Partial<PickerPanelProps<DateType>> = {},
@@ -993,6 +998,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         triggerOpen(false, getValue(selectedValue, 0) ? 0 : false, 'blur');
         triggerOpen(false, getValue(selectedValue, 1) ? 1 : false, 'blur');
       },
+      renderOkBtn,
     });
 
     if (picker !== 'time' && !showTime) {
@@ -1049,7 +1055,12 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
           presets={presetList}
           onClick={(nextValue) => {
             triggerChange(nextValue, null);
-            triggerOpen(false, mergedActivePickerIndex, 'preset');
+
+            if (closeOnPresetSelect) {
+              triggerOpen(false, mergedActivePickerIndex, 'preset');
+            } else {
+              onSelectedValueChange(() => triggerOpen(true, 1, 'open'));
+            }
           }}
           onHover={(hoverValue) => {
             setRangeHoverValue(hoverValue);

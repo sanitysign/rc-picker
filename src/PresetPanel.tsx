@@ -14,6 +14,7 @@ export interface PresetPanelProps<T, DateType> {
 }
 
 export type RenderPresetsProps<T> = {
+  checkEqual: (value: T) => { date: boolean; time: boolean };
   getClassNames: (value: T) => string;
   onClick: (value: T) => void;
   onMouseEnter: (value: T) => void;
@@ -50,9 +51,13 @@ export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, Date
 
   if (!presets.length && !renderPresets) return null;
 
-  const getClassNames = (value: T) => {
+  const checkEqual = (value: T) => {
     const val = executeValue(value);
-    const equal = isEqualDateTime<T, DateType>(generateConfig, prevValue, val);
+    return isEqualDateTime<T, DateType>(generateConfig, prevValue, val);
+  };
+
+  const getClassNames = (value: T) => {
+    const equal = checkEqual(value);
 
     let cn = '';
     if (equal.date) cn += 'is-active-date';
@@ -70,6 +75,7 @@ export default function PresetPanel<T, DateType>(props: PresetPanelProps<T, Date
   const elem =
     typeof renderPresets === 'function'
       ? renderPresets({
+          checkEqual,
           getClassNames,
           onClick: onItemClick,
           onMouseEnter,

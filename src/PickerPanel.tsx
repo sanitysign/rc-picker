@@ -38,6 +38,7 @@ import YearPanel from './panels/YearPanel';
 import RangeContext from './RangeContext';
 import { isEqual, WEEK_DAY_COUNT } from './utils/dateUtil';
 import getExtraFooter from './utils/getExtraFooter';
+import type { RenderOkBtn } from './utils/getRanges';
 import getRanges from './utils/getRanges';
 import { getLowerBoundTime, setDateTime, setTime } from './utils/timeUtil';
 import { PickerModeMap } from './utils/uiUtil';
@@ -101,12 +102,13 @@ export type PickerPanelSharedProps<DateType> = {
   toolbar?: JSX.Element;
   header?: JSX.Element;
   panelTop?: JSX.Element;
-} & ModifyCellClassNamesT<DateType>;
+} & RenderOkBtn &
+  ModifyCellClassNamesT<DateType>;
 
 export type PickerPanelBaseProps<DateType> = {
   picker: Exclude<PickerMode, 'date' | 'time'>;
   cellRender?: CellRender<DateType>;
-  onCancel: () => void
+  onCancel: () => void;
 } & PickerPanelSharedProps<DateType>;
 
 export type PickerPanelDateProps<DateType> = {
@@ -187,6 +189,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
     header,
     panelTop,
     modifyCellClassNames,
+    renderOkBtn,
   } = props as MergedPickerPanelProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -612,6 +615,7 @@ function PickerPanel<DateType>(props: PickerPanelProps<DateType>) {
           }
         },
         onCancel,
+        renderOkBtn,
       });
     }
   }

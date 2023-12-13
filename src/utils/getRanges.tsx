@@ -1,6 +1,14 @@
 import * as React from 'react';
 import type { Components, Locale, RangeList } from '../interface';
 
+export type RenderOkBtn = {
+  renderOkBtn?: (props: {
+    onClick: () => void;
+    disabled: boolean;
+    children: React.ReactNode;
+  }) => React.ReactNode;
+};
+
 export type RangesProps = {
   prefixCls: string;
   rangeList?: RangeList;
@@ -12,16 +20,17 @@ export type RangesProps = {
   okDisabled?: boolean;
   showNow?: boolean;
   locale: Locale;
-} & (
-  | {
-      needCancelButton: true;
-      onCancel: () => void;
-    }
-  | {
-      needCancelButton: false;
-      onCancel?: () => void;
-    }
-);
+} & RenderOkBtn &
+  (
+    | {
+        needCancelButton: true;
+        onCancel: () => void;
+      }
+    | {
+        needCancelButton: false;
+        onCancel?: () => void;
+      }
+  );
 
 export default function getRanges({
   prefixCls,
@@ -36,6 +45,7 @@ export default function getRanges({
   okDisabled,
   showNow,
   locale,
+  renderOkBtn,
 }: RangesProps) {
   let presetNode: React.ReactNode;
   let okNode: React.ReactNode;
@@ -52,11 +62,19 @@ export default function getRanges({
       );
     }
 
-    okNode = needConfirmButton && (
+    okNode = (
       <li className={`${prefixCls}-btn ${prefixCls}-ok`}>
-        <Button disabled={okDisabled} onClick={onOk}>
-          {locale.ok}
-        </Button>
+        {typeof renderOkBtn === 'function' ? (
+          renderOkBtn({
+            onClick: () => typeof onOk === 'function' && onOk(),
+            disabled: okDisabled,
+            children: locale.ok,
+          })
+        ) : (
+          <Button disabled={okDisabled} onClick={onOk}>
+            {locale.ok}
+          </Button>
+        )}
       </li>
     );
   }
