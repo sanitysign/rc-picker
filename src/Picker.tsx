@@ -220,6 +220,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     onClick,
     onKeyDown,
     onSelect,
+    onUpdate,
     direction,
     autoComplete = 'off',
     inputRender,
@@ -266,7 +267,11 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   });
 
   // Selected value
-  const [selectedValue, setSelectedValue] = React.useState<DateType | null>(mergedValue);
+  const [selectedValue, setSelectedValue] = useMergedState<DateType | null>(mergedValue, {
+    onChange: (val) => {
+      onUpdate?.(val);
+    },
+  });
 
   // Operation ref
   const operationRef: React.MutableRefObject<ContextOperationRefProps | null> =
@@ -287,10 +292,10 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   const prevOpenRef = React.useRef(mergedOpen);
 
   React.useEffect(() => {
-    if (mergedOpen === prevOpenRef.current) return
+    if (mergedOpen === prevOpenRef.current) return;
     onOpenChange?.(mergedOpen);
     prevOpenRef.current = mergedOpen;
-  }, [mergedOpen, onOpenChange])
+  }, [mergedOpen, onOpenChange]);
 
   // ============================= Text ==============================
   const [valueTexts, firstValueText] = useValueTexts(selectedValue, {
@@ -442,7 +447,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   React.useEffect(() => {
     // Sync select value
     setSelectedValue(mergedValue);
-  }, [mergedValue]);
+  }, [mergedValue]); // eslint-disable-line
 
   // ============================ Private ============================
   if (pickerRef) {
@@ -511,7 +516,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
             onPanelChange?.(viewDate, mode);
           }}
           onCancel={() => {
-            triggerInnerOpen(false)
+            triggerInnerOpen(false);
           }}
           innerInput={showInnerInput ? getInnerInput() : undefined}
           toolbar={toolbar}

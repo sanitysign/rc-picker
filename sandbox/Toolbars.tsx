@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import dayjs from 'dayjs';
 
 import Picker from '../src';
 import { RangePicker } from '../src';
@@ -7,12 +8,11 @@ import dayjsGenerateConfig from '../src/generate/dayjs';
 import CalendarLocaleRu from '../src/locale/ru_RU';
 import CalendarLocaleEn from '../src/locale/en_US';
 import { singlePresets, rangePresets, renderPresetsSingle, renderPresetsRange } from './utils';
+import type { EventValue, RangeValue } from '../src/interface';
 import type { RenderPresetsRangeProps } from '../src/RangePicker';
 import type { Dayjs } from 'dayjs';
 
 import type { PickerRefConfig } from '../src/Picker';
-
-
 
 const props = {
   generateConfig: dayjsGenerateConfig,
@@ -48,6 +48,8 @@ const Toolbars = () => {
   const [open, setOpen] = useState(false);
   const [openRange, setOpenRange] = useState(false);
 
+  const [selected, setSelected] = useState<RangeValue<Dayjs>>(null);
+
   return (
     <>
       <Picker
@@ -65,7 +67,6 @@ const Toolbars = () => {
         // toolbar={<div className="toolbar" ref={refToolbar}></div>}
         renderPresets={renderPresetsSingle}
         closeOnPresetSelect={false}
-
       />
 
       {/* <Picker
@@ -97,7 +98,7 @@ const Toolbars = () => {
         okBtn
         showInnerInput={true}
         // vertical
-        // toolbar={<div className="toolbar" ref={refToolbarRange}></div>}
+        toolbar={<div className="toolbar" ref={refToolbarRange}></div>}
         // doublePanel={false}
         // showInput={false}
         onOpenChange={(open) => setOpenRange(open)}
@@ -106,6 +107,7 @@ const Toolbars = () => {
         renderPresets={renderPresetsRange}
         cancelBtn
         closeOnPresetSelect={false}
+        onUpdate={setSelected}
       />
 
       {/* <RangePicker
@@ -115,7 +117,7 @@ const Toolbars = () => {
         ref={refRangeInner as any}
         showInnerInput={true}
         getPopupContainer={() => refToolbarRange.current}
-        // doublePanel={false}
+        doublePanel={false}
         showInput={false}
         open={openRange}
         isClickInsidePicker={(target) =>
@@ -129,6 +131,7 @@ const Toolbars = () => {
         //   innerPresetsRef.current = props
         //   return null
         // }}
+        disabledDate={(cur) => !!selected?.[0] && cur > selected[0]}
       /> */}
     </>
   );

@@ -156,6 +156,8 @@ export type RangePickerSharedProps<DateType> = {
   rangeHeader?: JSX.Element;
   rangePanelTop?: JSX.Element;
   renderPresets?: RenderPresets<PresetDate<Exclude<RangeValue<DateType>, null>>['value']>;
+  onSelect?: (value: [EventValue<DateType>, EventValue<DateType>]) => void;
+  onUpdate?: (value: RangeValue<DateType>) => void;
 };
 
 type OmitPickerProps<Props> = Omit<
@@ -171,6 +173,7 @@ type OmitPickerProps<Props> = Omit<
   | 'mode'
   | 'onChange'
   | 'onSelect'
+  | 'onUpdate'
   | 'onPanelChange'
   | 'pickerValue'
   | 'onPickerValueChange'
@@ -278,6 +281,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     onClick,
     onOk,
     onKeyDown,
+    onSelect,
+    onUpdate,
     components,
     order,
     direction,
@@ -380,6 +385,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       }
       return postValues;
     },
+    onChange: (val) => onUpdate?.(val),
   });
 
   // ============================= Modes =============================
@@ -919,7 +925,16 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
             setViewDate(viewDate, mergedActivePickerIndex);
           }}
           onOk={null}
-          onSelect={undefined}
+          onSelect={(date) => {
+            const anotherIdx = mergedActivePickerIndex === 0 ? 1 : 0;
+
+            const range: [EventValue<DateType>, EventValue<DateType>] =
+              anotherIdx === 0
+                ? [getValue(selectedValue, 0), date]
+                : [date, getValue(selectedValue, 1)];
+
+            onSelect?.(range);
+          }}
           onChange={undefined}
           toolbar={undefined}
           defaultValue={
