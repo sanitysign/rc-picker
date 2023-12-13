@@ -46,6 +46,7 @@ export type PickerRefConfig = {
   focus: () => void;
   blur: () => void;
   open: () => void;
+  confirm: () => void;
 };
 
 export type PickerSharedProps<DateType> = {
@@ -131,6 +132,7 @@ export type PickerSharedProps<DateType> = {
   panelTop?: JSX.Element;
   isClickInsidePicker?: (target: EventTarget) => boolean;
   renderPresets?: RenderPresets<PresetDate<DateType>['value']>;
+  okProgrammatic?: boolean;
 } & ModifyCellClassNamesT<DateType> &
   React.AriaAttributes;
 
@@ -227,6 +229,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     innerInputRender,
     changeOnBlur,
     okBtn,
+    okProgrammatic,
     preventOnBlurWhileOpen = true,
     openOnFocus = true,
     showInput = true,
@@ -244,6 +247,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
+  const needConfirmation = needConfirmButton || okProgrammatic
 
   const presetList = usePresets(presets);
 
@@ -375,7 +379,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   };
 
   const [inputProps, { focused, typing }] = usePickerInput({
-    blurToCancel: needConfirmButton,
+    blurToCancel: needConfirmation,
     open: mergedOpen,
     mergedOpen,
     preventOnBlurWhileOpen,
@@ -462,6 +466,10 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
       open: () => {
         triggerOpen(true);
       },
+      confirm: () => {
+        triggerChange(selectedValue);
+        triggerOpen(false);
+      },
     };
   }
 
@@ -517,6 +525,8 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
           }}
           onCancel={() => {
             triggerInnerOpen(false);
+            setSelectedValue(mergedValue);
+            resetText();
           }}
           innerInput={showInnerInput ? getInnerInput() : undefined}
           toolbar={toolbar}
@@ -676,7 +686,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   // ============================ Return =============================
   const onContextSelect = (date: DateType, type: 'key' | 'mouse' | 'submit') => {
-    if (type === 'submit' || (type !== 'key' && !needConfirmButton)) {
+    if (type === 'submit' || (type !== 'key' && !needConfirmation)) {
       // triggerChange will also update selected values
       triggerChange(date);
       triggerOpen(false);
@@ -762,6 +772,10 @@ class Picker<DateType> extends React.Component<PickerProps<DateType>> {
 
   open = () => {
     this.pickerRef.current?.open();
+  };
+
+  confirm = () => {
+    this.pickerRef.current?.confirm();
   };
 
   render() {

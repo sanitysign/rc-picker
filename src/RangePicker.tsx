@@ -291,6 +291,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     changeOnBlur,
     vertical,
     okBtn,
+    okProgrammatic,
     cancelBtn,
     cancelBtnText,
     preventOnBlurWhileOpen = true,
@@ -311,6 +312,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
   const needCancelButton: boolean = cancelBtn;
+  const needConfirmation = needConfirmButton || okProgrammatic
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelDivRef = useRef<HTMLDivElement>(null);
@@ -639,7 +641,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const getSharedInputHookProps = (index: 0 | 1, resetText: () => void) => ({
     mergedOpen,
     preventOnBlurWhileOpen,
-    blurToCancel: !changeOnBlur && needConfirmButton,
+    blurToCancel: !changeOnBlur && needConfirmation,
     forwardKeyDown,
     onBlur: onInternalBlur,
     isClickOutside: (target: EventTarget | null) => {
@@ -754,6 +756,18 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     }
   };
 
+  // ================ Confirmation with ref or okBtn =================
+  const onConfirm = () => {
+    const selectedIndexValue = getValue(selectedValue, mergedActivePickerIndex);
+    if (selectedIndexValue) {
+      triggerChange(selectedValue, mergedActivePickerIndex);
+      onOk?.(selectedValue);
+
+      // Switch
+      triggerOpen(false, mergedActivePickerIndex, 'confirm');
+    }
+  }
+
   // ============================= Sync ==============================
   // Close should sync back with text value
   const startStr =
@@ -839,6 +853,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       open: () => {
         triggerOpen(true, 0, 'open');
       },
+      confirm: onConfirm
     };
   }
 
@@ -999,16 +1014,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         (disabledDate && disabledDate(selectedValue[mergedActivePickerIndex])),
       locale,
       // rangeList,
-      onOk: () => {
-        const selectedIndexValue = getValue(selectedValue, mergedActivePickerIndex);
-        if (selectedIndexValue) {
-          triggerChange(selectedValue, mergedActivePickerIndex);
-          onOk?.(selectedValue);
-
-          // Switch
-          triggerOpen(false, mergedActivePickerIndex, 'confirm');
-        }
-      },
+      onOk: onConfirm,
       onCancel: () => {
         triggerOpen(false, getValue(selectedValue, 0) ? 0 : false, 'blur');
         triggerOpen(false, getValue(selectedValue, 1) ? 1 : false, 'blur');
@@ -1344,7 +1350,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     const nextActivePickerIndex = mergedActivePickerIndex === 0 ? 1 : 0;
     const index = mergedDisabled[nextActivePickerIndex] ? false : mergedActivePickerIndex;
 
-    if (type === 'submit' || (type !== 'key' && !needConfirmButton)) {
+    if (type === 'submit' || (type !== 'key' && !needConfirmation)) {
       // triggerChange will also update selected values
       triggerChange(values, mergedActivePickerIndex);
       // clear hover value style
@@ -1359,7 +1365,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       return;
     }
 
-    if (okBtn && !withTime) focusNextInput(index, 'confirm');
+    if (!withTime) focusNextInput(index, 'confirm');
 
     setSelectedValue(values);
   };
@@ -1489,6 +1495,10 @@ class RangePicker<DateType> extends React.Component<RangePickerProps<DateType>> 
 
   open = () => {
     this.pickerRef.current?.open();
+  };
+
+  confirm = () => {
+    this.pickerRef.current?.confirm();
   };
 
   render() {
