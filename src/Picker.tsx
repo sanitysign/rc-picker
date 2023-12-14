@@ -132,7 +132,7 @@ export type PickerSharedProps<DateType> = {
   panelTop?: JSX.Element;
   isClickInsidePicker?: (target: EventTarget) => boolean;
   renderPresets?: RenderPresets<PresetDate<DateType>['value']>;
-  okProgrammatic?: boolean;
+  autoApply?: boolean;
 } & ModifyCellClassNamesT<DateType> &
   React.AriaAttributes;
 
@@ -220,6 +220,8 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     onMouseLeave,
     onContextMenu,
     onClick,
+    onOk,
+    onClear,
     onKeyDown,
     onSelect,
     onUpdate,
@@ -229,7 +231,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     innerInputRender,
     changeOnBlur,
     okBtn,
-    okProgrammatic,
+    autoApply = true,
     preventOnBlurWhileOpen = true,
     openOnFocus = true,
     showInput = true,
@@ -247,7 +249,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
-  const needConfirmation = needConfirmButton || okProgrammatic
+  const needConfirmation = needConfirmButton || !autoApply
 
   const presetList = usePresets(presets);
 
@@ -410,6 +412,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
       triggerChange(selectedValue);
       triggerOpen(false);
+      onOk?.(selectedValue)
       resetText();
       return true;
     },
@@ -469,6 +472,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
       confirm: () => {
         triggerChange(selectedValue);
         triggerOpen(false);
+        onOk?.(selectedValue);
       },
     };
   }
@@ -592,6 +596,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
         e.stopPropagation();
         triggerChange(null);
         triggerOpen(false);
+        onClear?.();
       }}
       className={`${prefixCls}-clear`}
       role="button"
@@ -690,6 +695,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
       // triggerChange will also update selected values
       triggerChange(date);
       triggerOpen(false);
+      onOk?.(selectedValue)
     }
   };
   const popupPlacement = direction === 'rtl' ? 'bottomRight' : 'bottomLeft';

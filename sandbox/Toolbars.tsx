@@ -67,6 +67,7 @@ const Toolbars = () => {
         // toolbar={<div className="toolbar" ref={refToolbar}></div>}
         renderPresets={renderPresetsSingle}
         closeOnPresetSelect={false}
+        // onOk={(val) => console.log(val)}
       />
 
       {/* <Picker
@@ -108,7 +109,8 @@ const Toolbars = () => {
         cancelBtn
         closeOnPresetSelect={false}
         onUpdate={setSelected}
-        // okProgrammatic
+        // autoApply={false}
+        // onOk={(val) => console.log(val)}
       />
 
       {/* <RangePicker

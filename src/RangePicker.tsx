@@ -280,6 +280,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     onMouseLeave,
     onClick,
     onOk,
+    onClear,
     onKeyDown,
     onSelect,
     onUpdate,
@@ -291,7 +292,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     changeOnBlur,
     vertical,
     okBtn,
-    okProgrammatic,
+    autoApply = true,
     cancelBtn,
     cancelBtnText,
     preventOnBlurWhileOpen = true,
@@ -312,7 +313,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
   const needCancelButton: boolean = cancelBtn;
-  const needConfirmation = needConfirmButton || okProgrammatic
+  const needConfirmation = needConfirmButton || !autoApply
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelDivRef = useRef<HTMLDivElement>(null);
@@ -693,6 +694,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
       // Switch
       triggerOpen(false, mergedActivePickerIndex, 'confirm');
+      onOk?.(selectedValue);
     },
     onCancel: () => {
       triggerOpen(false, index, 'cancel');
@@ -761,10 +763,10 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     const selectedIndexValue = getValue(selectedValue, mergedActivePickerIndex);
     if (selectedIndexValue) {
       triggerChange(selectedValue, mergedActivePickerIndex);
-      onOk?.(selectedValue);
 
       // Switch
       triggerOpen(false, mergedActivePickerIndex, 'confirm');
+      onOk?.(selectedValue);
     }
   }
 
@@ -1184,6 +1186,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
 
         triggerChange(values, null);
         triggerOpen(false, mergedActivePickerIndex, 'clear');
+        onClear?.();
       }}
       className={`${prefixCls}-clear`}
       role="button"
@@ -1361,6 +1364,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       }
 
       triggerOpen(false, index, 'confirm');
+      onOk?.(values)
 
       return;
     }

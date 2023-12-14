@@ -82,6 +82,7 @@ export type PickerPanelSharedProps<DateType> = {
   onPanelChange?: OnPanelChange<DateType>;
   onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
   onOk?: (date: DateType) => void;
+  onClear?: () => void;
   onUpdate?: (date: DateType | null) => void;
 
   direction?: 'ltr' | 'rtl';
