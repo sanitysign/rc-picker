@@ -313,7 +313,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
   const needCancelButton: boolean = cancelBtn;
-  const needConfirmation = needConfirmButton || !autoApply
+  const needConfirmation = needConfirmButton || !autoApply;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const panelDivRef = useRef<HTMLDivElement>(null);
@@ -458,7 +458,11 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     }, 0);
   }
 
-  function triggerChange(newValue: RangeValue<DateType>, sourceIndex: 0 | 1) {
+  function triggerChange(
+    newValue: RangeValue<DateType>,
+    sourceIndex: 0 | 1,
+    onAfterChange?: (val: RangeValue<DateType>, canTrigger: boolean) => void,
+  ) {
     let values = newValue;
     let startValue = getValue(values, 0);
     let endValue = getValue(values, 1);
@@ -525,6 +529,8 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
         onChange(values, [startStr, endStr]);
       }
     }
+
+    onAfterChange?.(values, canTrigger);
   }
 
   const forwardKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -761,14 +767,19 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   // ================ Confirmation with ref or okBtn =================
   const onConfirm = () => {
     const selectedIndexValue = getValue(selectedValue, mergedActivePickerIndex);
-    if (selectedIndexValue) {
-      triggerChange(selectedValue, mergedActivePickerIndex);
 
-      // Switch
-      triggerOpen(false, mergedActivePickerIndex, 'confirm');
-      onOk?.(selectedValue);
+    if (selectedIndexValue) {
+      triggerChange(selectedValue, mergedActivePickerIndex, (_val, canTrigger) => {
+        // Switch
+        triggerOpen(
+          false,
+          canTrigger ? false : mergedActivePickerIndex,
+          'confirm',
+        );
+        onOk?.(selectedValue);
+      });
     }
-  }
+  };
 
   // ============================= Sync ==============================
   // Close should sync back with text value
@@ -855,7 +866,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       open: () => {
         triggerOpen(true, 0, 'open');
       },
-      confirm: onConfirm
+      confirm: onConfirm,
     };
   }
 
@@ -1364,7 +1375,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       }
 
       triggerOpen(false, index, 'confirm');
-      onOk?.(values)
+      onOk?.(values);
 
       return;
     }
