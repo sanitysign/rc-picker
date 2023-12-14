@@ -308,6 +308,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     isClickInsidePicker,
     renderPresets,
     renderOkBtn,
+    modifyInputValue,
   } = props as MergedRangePickerProps<DateType>;
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
@@ -597,13 +598,13 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   // ========================== Hover Range ==========================
   const [hoverRangedValue, setHoverRangedValue] = useState<RangeValue<DateType>>(null);
 
-  const [startHoverValue, onStartEnter, onStartLeave] = useHoverValue(startText, {
+  const [startHoverValue, startHoverDate, onStartEnter, onStartLeave] = useHoverValue(startText, {
     formatList,
     generateConfig,
     locale,
   });
 
-  const [endHoverValue, onEndEnter, onEndLeave] = useHoverValue(endText, {
+  const [endHoverValue, endHoverDate, onEndEnter, onEndLeave] = useHoverValue(endText, {
     formatList,
     generateConfig,
     locale,
@@ -771,11 +772,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     if (selectedIndexValue) {
       triggerChange(selectedValue, mergedActivePickerIndex, (_val, canTrigger) => {
         // Switch
-        triggerOpen(
-          false,
-          canTrigger ? false : mergedActivePickerIndex,
-          'confirm',
-        );
+        triggerOpen(false, canTrigger ? false : mergedActivePickerIndex, 'confirm');
         onOk?.(selectedValue);
       });
     }
@@ -1267,10 +1264,27 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     const activeBarPositionStyleInner =
       direction === 'rtl' ? { right: activeBarLeftInner } : { left: activeBarLeftInner };
 
+    let startInputValue = startHoverValue || startText;
+    let endInputValue = endHoverValue || endText;
+
+    if (typeof modifyInputValue === 'function') {
+      startInputValue = modifyInputValue(startInputValue, {
+        type: 'inner',
+        index: 0,
+        date: startHoverDate || getValue(selectedValue, 0),
+      })
+
+      endInputValue = modifyInputValue(endInputValue, {
+        type: 'inner',
+        index: 1,
+        date: endHoverDate || getValue(selectedValue, 1),
+      })
+    }
+
     const mergedStartInputProps = {
       disabled: mergedDisabled[0],
       readOnly: inputReadOnly || typeof formatList[0] === 'function' || !startTyping,
-      value: startHoverValue || startText,
+      value: startInputValue,
       onChange: (e) => {
         triggerStartTextChange(e.target.value);
       },
@@ -1285,7 +1299,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     const mergedEndInputProps = {
       disabled: mergedDisabled[1],
       readOnly: inputReadOnly || typeof formatList[0] === 'function' || !endTyping,
-      value: endHoverValue || endText,
+      value: endInputValue,
       onChange: (e) => {
         triggerEndTextChange(e.target.value);
       },
@@ -1385,6 +1399,9 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     setSelectedValue(values);
   };
 
+  const startInputValue = startHoverValue || startText;
+  const endInputValue = endHoverValue || endText;
+
   return (
     <PanelContext.Provider
       value={{
@@ -1436,7 +1453,15 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
                 id={id}
                 disabled={mergedDisabled[0]}
                 readOnly={inputReadOnly || typeof formatList[0] === 'function' || !startTyping}
-                value={startHoverValue || startText}
+                value={
+                  typeof modifyInputValue === 'function'
+                    ? modifyInputValue(startInputValue, {
+                        type: 'main',
+                        index: 0,
+                        date: startHoverDate || getValue(selectedValue, 0),
+                      })
+                    : startInputValue
+                }
                 onChange={(e) => {
                   triggerStartTextChange(e.target.value);
                 }}
@@ -1461,7 +1486,15 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
               <input
                 disabled={mergedDisabled[1]}
                 readOnly={inputReadOnly || typeof formatList[0] === 'function' || !endTyping}
-                value={endHoverValue || endText}
+                value={
+                  typeof modifyInputValue === 'function'
+                    ? modifyInputValue(endInputValue, {
+                        type: 'main',
+                        index: 1,
+                        date: endHoverDate || getValue(selectedValue, 1),
+                      })
+                    : endInputValue
+                }
                 onChange={(e) => {
                   triggerEndTextChange(e.target.value);
                 }}

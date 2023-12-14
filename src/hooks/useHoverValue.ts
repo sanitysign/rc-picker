@@ -5,7 +5,7 @@ import useValueTexts from './useValueTexts';
 export default function useHoverValue<DateType>(
   valueText: string,
   { formatList, generateConfig, locale }: ValueTextConfig<DateType>,
-): [string, (date: DateType) => void, (immediately?: boolean) => void] {
+): [string, DateType, (date: DateType) => void, (immediately?: boolean) => void] {
   const [value, internalSetValue] = useState<DateType>(null);
   const raf = useRef(null);
 
@@ -40,5 +40,5 @@ export default function useHoverValue<DateType>(
 
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
-  return [firstText, onEnter, onLeave];
+  return [firstText, value, onEnter, onLeave];
 }

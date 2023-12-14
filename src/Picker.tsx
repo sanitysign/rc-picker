@@ -133,6 +133,10 @@ export type PickerSharedProps<DateType> = {
   isClickInsidePicker?: (target: EventTarget) => boolean;
   renderPresets?: RenderPresets<PresetDate<DateType>['value']>;
   autoApply?: boolean;
+  modifyInputValue?: (
+    value: string,
+    options: { type: 'main' | 'inner'; index: 0 | 1; date: DateType | null },
+  ) => string;
 } & ModifyCellClassNamesT<DateType> &
   React.AriaAttributes;
 
@@ -242,6 +246,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     panelTop,
     isClickInsidePicker,
     renderPresets,
+    modifyInputValue,
   } = props as MergedPickerProps<DateType>;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -249,7 +254,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const withTime = (picker === 'date' && !!showTime) || picker === 'time';
   const needConfirmButton: boolean = withTime || okBtn;
-  const needConfirmation = needConfirmButton || !autoApply
+  const needConfirmation = needConfirmButton || !autoApply;
 
   const presetList = usePresets(presets);
 
@@ -412,7 +417,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
       triggerChange(selectedValue);
       triggerOpen(false);
-      onOk?.(selectedValue)
+      onOk?.(selectedValue);
       resetText();
       return true;
     },
@@ -477,7 +482,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     };
   }
 
-  const [hoverValue, onEnter, onLeave] = useHoverValue(text, {
+  const [hoverValue, hoverDate, onEnter, onLeave] = useHoverValue(text, {
     formatList,
     generateConfig,
     locale,
@@ -607,6 +612,17 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
 
   const mergedAllowClear = !!allowClear && mergedValue && !disabled;
 
+  const inputValueInit = hoverValue || text;
+
+  const inputValue =
+    typeof modifyInputValue === 'function'
+      ? modifyInputValue(inputValueInit, {
+          type: 'main',
+          index: 0,
+          date: hoverDate || selectedValue,
+        })
+      : inputValueInit;
+
   // ============================= Inputs =============================
   const mergedInputProps: React.InputHTMLAttributes<HTMLInputElement> & {
     ref: React.MutableRefObject<HTMLInputElement>;
@@ -615,7 +631,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     tabIndex,
     disabled,
     readOnly: inputReadOnly || typeof formatList[0] === 'function' || !typing,
-    value: hoverValue || text,
+    value: inputValue,
     onChange: (e) => {
       triggerTextChange(e.target.value);
     },
@@ -638,10 +654,20 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   );
 
   function getInnerInput() {
+    const inputValueInner =
+      typeof modifyInputValue === 'function'
+        ? modifyInputValue(inputValueInit, {
+            type: 'inner',
+            index: 0,
+            date: hoverDate || selectedValue,
+          })
+        : inputValueInit;
+
     const mergedInnerInputProps: React.InputHTMLAttributes<HTMLInputElement> & {
       ref: React.MutableRefObject<HTMLInputElement>;
     } = {
       ...mergedInputProps,
+      value: inputValueInner,
       placeholder: placeholderInner ?? placeholder,
       className: classNames(mergedInputProps.className, `${prefixCls}-inner-input-element`),
       ref: innerInputRef,
@@ -695,7 +721,7 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
       // triggerChange will also update selected values
       triggerChange(date);
       triggerOpen(false);
-      onOk?.(selectedValue)
+      onOk?.(selectedValue);
     }
   };
   const popupPlacement = direction === 'rtl' ? 'bottomRight' : 'bottomLeft';
