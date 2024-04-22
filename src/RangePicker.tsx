@@ -575,9 +575,7 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
       generateConfig,
     });
 
-    const disabledFunc = index === 0 ? disabledStartDate : disabledEndDate;
-
-    if (inputDate && !disabledFunc(inputDate)) {
+    if (inputDate) {
       setSelectedValue(updateValues(selectedValue, inputDate, index));
       setViewDate(inputDate, index);
     }
