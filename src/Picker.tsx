@@ -122,7 +122,6 @@ export type PickerSharedProps<DateType> = {
   direction?: 'ltr' | 'rtl';
 
   // new props
-  preventOnBlurWhileOpen?: boolean;
   openOnFocus?: boolean;
   showInput?: boolean;
   showInnerInput?: boolean;
@@ -236,7 +235,6 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
     changeOnBlur,
     okBtn,
     autoApply = true,
-    preventOnBlurWhileOpen = true,
     openOnFocus = true,
     showInput = true,
     showInnerInput = false,
@@ -388,8 +386,6 @@ function InnerPicker<DateType>(props: PickerProps<DateType>) {
   const [inputProps, { focused, typing }] = usePickerInput({
     blurToCancel: needConfirmation,
     open: mergedOpen,
-    mergedOpen,
-    preventOnBlurWhileOpen,
     value: text,
     triggerOpen,
     forwardKeyDown,

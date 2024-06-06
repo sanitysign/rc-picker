@@ -295,7 +295,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
     autoApply = true,
     cancelBtn,
     cancelBtnText,
-    preventOnBlurWhileOpen = true,
     openOnFocus = true,
     doublePanel = true,
     showInput = true,
@@ -645,8 +644,6 @@ function InnerRangePicker<DateType>(props: RangePickerProps<DateType>) {
   };
 
   const getSharedInputHookProps = (index: 0 | 1, resetText: () => void) => ({
-    mergedOpen,
-    preventOnBlurWhileOpen,
     blurToCancel: !changeOnBlur && needConfirmation,
     forwardKeyDown,
     onBlur: onInternalBlur,

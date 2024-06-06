@@ -6,8 +6,6 @@ import { addGlobalMouseDownEvent, getTargetFromEvent } from '../utils/uiUtil';
 
 export default function usePickerInput({
   open,
-  mergedOpen,
-  preventOnBlurWhileOpen,
   value,
   isClickOutside,
   triggerOpen,
@@ -21,8 +19,6 @@ export default function usePickerInput({
   changeOnBlur,
 }: {
   open: boolean;
-  mergedOpen: boolean;
-  preventOnBlurWhileOpen: boolean;
   value: string;
   isClickOutside: (clickElement: EventTarget | null) => boolean;
   triggerOpen: (open: boolean) => void;
@@ -136,7 +132,7 @@ export default function usePickerInput({
         }
       }
       setFocused(false);
-      if (preventOnBlurWhileOpen && mergedOpen) return;
+      if (!isClickOutside(e.relatedTarget)) return;
 
       onBlur?.(e);
     },
